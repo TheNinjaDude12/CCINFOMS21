@@ -1,0 +1,15 @@
+CREATE TABLE publisherRecord(
+publisher_id PRIMARY KEY,
+name VARCHAR(100) NOT NULL,
+country VARCHAR(100),
+established_date DATE,
+website VARCHAR(100),
+contact_email VRCHAR(100),
+company_size INT DEFAULT 0,
+specialization VARCHAR(100),
+is_active BOOLEAN DEFAULT TRUE,
+total_games_published INT DEFAULT 0,
+revenue_share_percentage DECIMAL(5,2),
+publisher_budget_range FLOAT DEFAULT 0.0
+
+);
