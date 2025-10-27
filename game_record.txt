@@ -3,7 +3,7 @@ CREATE TABLE game_record(
 	`title` varchar(50) NOT NULL,
 	`genre` varchar(20),
 	`release_date` DATE,
-	`platform` varchar(10),
+	`platform` varchar(20),
 	`price` float DEFAULT 0.0,
 	`total_bought` int DEFAULT 0,
 	`status` varchar(10),
