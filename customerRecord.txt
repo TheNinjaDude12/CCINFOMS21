@@ -1,12 +1,11 @@
-CREATE TABLE customerRecord(
-customer_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-name VARCHAR(100),
-email VARCHAR(100),
-country VARCHAR(100),
-preferred_platform VARCHAR(100),
-total_spent FLOAT DEFAULT 0.00,
-games_owned INT DEFAULT 0
-
-
-
+CREATE TABLE customer_record(
+    customer_id INT AUTO_INCREMENT PRIMARY KEY,
+    last_name VARCHAR(100) NOT NULL,
+    first_name VARCHAR(100) NOT NULL,
+    email VARCHAR(300) NOT NULL UNIQUE,
+    registration_date DATE NOT NULL,
+    country VARCHAR(100),
+    preferred_platform VARCHAR(200) DEFAULT 'None',
+    total_spent DECIMAL(10,2) DEFAULT 0.00,
+    games_owned INT DEFAULT 0
 );
