@@ -1,0 +1,13 @@
+CREATE TABLE game_record(
+	`game_id` int NOT NULL PRIMARY KEY,
+	`title` varchar(50) NOT NULL,
+	`genre` varchar(10),
+	`release_date` DATE,
+	`platform` varchar(10),
+	`price` float DEFAULT 0.0,
+	`total_bought` int DEFAULT 0,
+	`status` varchar(10),
+	`review_average` float DEFAULT 0,
+	`reviews` varchar(200),
+	`publisher_id` int NOT NULL
+);
