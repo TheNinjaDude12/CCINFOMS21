@@ -6,8 +6,5 @@ CREATE TABLE transaction_log(
     payment_method VARCHAR(50) NOT NULL,
     amount DECIMAL(10,2) NOT NULL,
     FOREIGN KEY (customer_id) REFERENCES customer_record(customer_id),
-    FOREIGN KEY (game_id) REFERENCES game_record(game_id),
-    INDEX idx_customer (customer_id),
-    INDEX idx_game (game_id),
-    INDEX idx_purchase_date (purchase_date)
+    FOREIGN KEY (game_id) REFERENCES game_record(game_id)
 );
