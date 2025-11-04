@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Text?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="466.0" prefWidth="735.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo22.CustomerAdd">
+   <children>
+      <TextField fx:id="lastNameField" layoutX="259.0" layoutY="116.0" prefHeight="25.0" prefWidth="174.0" />
+      <TextField fx:id="firstNameField" layoutX="259.0" layoutY="74.0" prefHeight="25.0" prefWidth="174.0" />
+      <DatePicker fx:id="registerField" editable="false" layoutX="257.0" layoutY="226.0" />
+      <TextField fx:id="emailField" layoutX="259.0" layoutY="157.0" prefHeight="25.0" prefWidth="174.0" />
+      <Text layoutX="167.0" layoutY="91.0" strokeType="OUTSIDE" strokeWidth="0.0" text="First Name" />
+      <Text layoutX="167.0" layoutY="133.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Last Name" />
+      <Text layoutX="165.0" layoutY="243.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Register Date" />
+      <Text layoutX="167.0" layoutY="174.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Email" />
+      <Text layoutX="152.0" layoutY="288.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Preferred Platform" />
+      <TextField fx:id="platformField" layoutX="257.0" layoutY="271.0" prefHeight="25.0" prefWidth="174.0" />
+      <Button layoutX="251.0" layoutY="327.0" mnemonicParsing="false" onAction="#addCustomerData" prefHeight="25.0" prefWidth="162.0" text="Add Customer" />
+      <Text fx:id="firstNameError" layoutX="455.0" layoutY="91.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" wrappingWidth="41.13671875" />
+      <Text fx:id="lastNameError" layoutX="455.0" layoutY="133.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" wrappingWidth="41.13671875" />
+      <Text fx:id="emailError" layoutX="455.0" layoutY="174.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" wrappingWidth="41.13671875" />
+      <Text fx:id="registerError" layoutX="455.0" layoutY="243.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" wrappingWidth="41.13671875" />
+      <TextField fx:id="countryField" layoutX="257.0" layoutY="190.0" prefHeight="25.0" prefWidth="174.0" />
+      <Text layoutX="167.0" layoutY="207.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Country" />
+      <Text fx:id="countryError" layoutX="455.0" layoutY="207.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" wrappingWidth="41.13671875" />
+   </children>
+</AnchorPane>
