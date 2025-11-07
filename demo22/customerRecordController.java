@@ -39,6 +39,25 @@ public class customerRecordController {
         stage.show();
     }
 
+    public void generateReport(ActionEvent event) throws IOException {
+        System.out.println("works");
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("generateCustomerReportView.fxml")));
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+
+    }
+
+    public void back(ActionEvent event) throws IOException {
+        System.out.println("works");
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("hello-view.fxml")));
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+
 
 
 
