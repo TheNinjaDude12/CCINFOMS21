@@ -1,4 +1,4 @@
-CREATE TABLE publisherRecord(
+CREATE TABLE publisher_record(
 publisher_id PRIMARY KEY,
 name VARCHAR(100) NOT NULL,
 country VARCHAR(100),
