@@ -55,6 +55,24 @@ public class CustomerAdd {
     String registerDate;
      String country;
     public boolean canAddCustomer() {
+        if(firstNameError.isVisible()) {
+            firstNameError.setVisible(false);
+        }
+        if(lastNameError.isVisible()) {
+            lastNameError.setVisible(false);
+        }
+        if(emailError.isVisible()) {
+            emailError.setVisible(false);
+        }
+        if(countryError.isVisible()) {
+            countryError.setVisible(false);
+        }
+        if(registerError.isVisible()) {
+            registerError.setVisible(false);
+        }
+
+
+
         boolean isValid = true;
         if(firstNameField.getText().isEmpty()) {
             firstNameError.setText("First name must not be empty");
@@ -63,6 +81,7 @@ public class CustomerAdd {
         }
         else if(isInteger(firstNameField.getText())) {
             firstNameError.setText("First name cannot be an integer");
+            firstNameError.setVisible(true);
             isValid = false;
         }
         else {
@@ -71,10 +90,12 @@ public class CustomerAdd {
         }
         if(lastNameField.getText().isEmpty()) {
             lastNameError.setText("Last name must not be empty");
+            lastNameError.setVisible(true);
             isValid = false;
         }
         else if(isInteger(lastNameField.getText())) {
             lastNameError.setText("Last name cannot be an integer");
+            lastNameError.setVisible(true);
             isValid = false;
         }
         else {
@@ -82,6 +103,7 @@ public class CustomerAdd {
         }
         if(emailField.getText().isEmpty()) {
             emailError.setText("Email must not be empty");
+            emailError.setVisible(true);
             isValid = false;
         }
         else {
@@ -89,6 +111,7 @@ public class CustomerAdd {
         }
         if(registerField.getValue() == null) {
             registerError.setText("Register field must not be empty");
+            registerError.setVisible(true);
             isValid = false;
         }
         else {
@@ -99,10 +122,12 @@ public class CustomerAdd {
         }
         if(countryField.getText().isEmpty()) {
             countryError.setText("Country must not be empty");
+            countryError.setVisible(true);
             isValid = false;
 
         } else if (isInteger(countryField.getText())) {
             countryError.setText("Country cannot be an integer");
+            countryError.setVisible(true);
             isValid = false;
 
         } else {
@@ -120,6 +145,8 @@ public class CustomerAdd {
         if(!canAdd) {
             return;
         }
+
+
 
         System.out.println("TESTING");
 
