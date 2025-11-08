@@ -1,13 +1,21 @@
 package com.example.demo22;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.sql.*;
-import java.time.LocalDate;
-import java.util.Scanner;
+import java.util.Objects;
+
 
 public class CustomerAdd {
     @FXML
@@ -38,7 +46,7 @@ public class CustomerAdd {
     @FXML
     private  Text registerError;
      String firstName;
-    String lastName;
+     String lastName;
      String email;
      String platform;
      int year;
@@ -129,6 +137,7 @@ public class CustomerAdd {
             insertCustomer.setString(5, country);
             insertCustomer.setString(6, platform);
             insertCustomer.executeUpdate();
+            showSuccessAlert();
 
 
 
@@ -148,5 +157,23 @@ public class CustomerAdd {
         } catch (NumberFormatException e) {
             return false; // If a NumberFormatException is caught, it's not a valid integer
         }
+    }
+
+    private void showSuccessAlert() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Success");
+        alert.setHeaderText(null);
+        alert.setContentText("Customer added successfully!");
+        alert.showAndWait();
+    }
+
+
+    public void back(ActionEvent event) throws IOException {
+        System.out.println("works");
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("customerView.fxml")));
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
     }
 }
