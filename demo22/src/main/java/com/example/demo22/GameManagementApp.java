@@ -32,7 +32,7 @@ public class GameManagementApp extends Application {
 
     private static final String DB_URL = "jdbc:mysql://127.0.0.1:3307/gamemanagementdatabase";
     private static final String DB_USER = "root";
-    private static final String DB_PASS = "thunder1515";
+    private static final String DB_PASS = "";
 
     private final TableView<Customer> customerTable = new TableView<>();
     private final TableView<Developer> developerTable = new TableView<>();
