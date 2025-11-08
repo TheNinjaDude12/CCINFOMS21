@@ -7,12 +7,14 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="730.0" prefWidth="1033.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo22.customerRecordController">
    <children>
-      <Text layoutX="296.0" layoutY="56.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Customer Record" wrappingWidth="531.1748046875">
+      <Text layoutX="202.0" layoutY="87.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Customer Record" wrappingWidth="649.1748046875">
          <font>
-            <Font size="39.0" />
+            <Font size="81.0" />
          </font>
       </Text>
-      <Button layoutX="356.0" layoutY="94.0" mnemonicParsing="false" onAction="#viewCustomerTable" prefHeight="52.0" prefWidth="168.0" text="View All Customers" />
-      <Button layoutX="356.0" layoutY="168.0" mnemonicParsing="false" onAction="#addCustomer" prefHeight="52.0" prefWidth="168.0" text="Add Customer" />
+      <Button layoutX="313.0" layoutY="129.0" mnemonicParsing="false" onAction="#viewCustomerTable" prefHeight="108.0" prefWidth="356.0" text="View All Customers" />
+      <Button layoutX="313.0" layoutY="302.0" mnemonicParsing="false" onAction="#addCustomer" prefHeight="127.0" prefWidth="356.0" text="Add Customer" />
+      <Button layoutX="313.0" layoutY="498.0" mnemonicParsing="false" onAction="#generateReport" prefHeight="127.0" prefWidth="356.0" text="Generate Report" />
+      <Button layoutX="738.0" layoutY="142.0" mnemonicParsing="false" onAction="#back" prefHeight="79.0" prefWidth="238.0" text="Back" />
    </children>
 </AnchorPane>
