@@ -67,7 +67,12 @@ public class GenerateCustomerReport {
                 // Enable both year AND month spinners
                 yearSpinner.setDisable(false);
                 yearSpinner.setEditable(true);
-                monthSpinner.setDisable(false);
+                if(monthSpinner.isDisable()) {
+                    monthSpinner.setDisable(false);
+                }
+                else {
+                    monthSpinner.setDisable(true);
+                }
                 monthSpinner.setEditable(true);
             }
         });
