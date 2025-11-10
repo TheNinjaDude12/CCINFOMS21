@@ -30,7 +30,7 @@ import java.util.Optional;
 
 public class GameManagementApp extends Application {
 
-    private static final String DB_URL = "jdbc:mysql://127.0.0.1:3307/gamemanagementdatabase";
+    private static final String DB_URL = "jdbc:mysql://127.0.0.1:3306/gamemanagementdatabase";
     private static final String DB_USER = "root";
     private static final String DB_PASS = "thunder1515";
 
