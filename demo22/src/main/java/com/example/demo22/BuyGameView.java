@@ -1,16 +1,18 @@
 package com.example.demo22;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
@@ -56,8 +58,49 @@ public class BuyGameView {
     @FXML
     private ChoiceBox<String> paymentSelector;
     public void initialize() {
-        String[] payArr = {"Cash", "Credit Card", "Gcash", "Shoppeepay"};
+        ArrayList<String> payArr = new ArrayList<>();
+        payArr.add("Cash");
+        payArr.add("Debit Card");
+        payArr.add("Credit Card");
+        payArr.add("Gcash");
+        payArr.add("Shoppee PayLater");
+        payArr.add("Add Payment");
+
         ObservableList<String> payment = FXCollections.observableArrayList(payArr);
+        paymentSelector.setItems(payment);
+        paymentSelector.setOnAction(event -> {
+           if(paymentSelector.getValue() !=null && paymentSelector.getValue().equals("Add Payment")) {
+               Dialog<Void> dialog = new Dialog<>();
+               dialog.setTitle("Customer Details");
+               dialog.setHeaderText(null);
+               VBox content = new VBox(15);
+               content.setPadding(new Insets(20));
+               content.setPrefWidth(400);
+               Text paymentMethod = new Text("Payment Method");
+               TextField paymentField = new TextField();
+               paymentField.setPromptText("Add Payment Method");
+               Button addPaymentButton = new Button("Add");
+               addPaymentButton.setOnAction(adder -> {
+                   System.out.println("Test");
+                   payArr.remove(payArr.size()-1);
+                   System.out.println("Checkpoint 1");
+                   payArr.add(paymentField.getText());
+                   System.out.println("Checkpoint 2");
+                   payArr.add("Add Payment");
+                   System.out.println("Checkpoint 3");
+                   paymentSelector.setItems(FXCollections.observableArrayList(payArr));
+                   System.out.println("Checkpoint 4");
+                   dialog.close();
+
+
+                       });
+               dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
+               content.getChildren().addAll(paymentMethod, paymentField, addPaymentButton);
+               dialog.getDialogPane().setContent(content);
+
+               dialog.showAndWait();
+           }
+        });
         paymentSelector.setItems(payment);
         paymentSelector.setValue("Cash");
         buyGameButton.setDisable(true);
