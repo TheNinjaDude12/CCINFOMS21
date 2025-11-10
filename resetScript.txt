@@ -1,0 +1,14 @@
+-- ============================================
+-- QUICK RESET - Run this before each demo
+-- ============================================
+
+SET FOREIGN_KEY_CHECKS = 0;
+TRUNCATE TABLE transaction_log;
+TRUNCATE TABLE customer_record;
+TRUNCATE TABLE game_record;
+ALTER TABLE customer_record AUTO_INCREMENT = 1;
+ALTER TABLE transaction_log AUTO_INCREMENT = 1;
+ALTER TABLE game_record AUTO_INCREMENT = 1;
+SET FOREIGN_KEY_CHECKS = 1;
+
+SELECT '✓ Database reset complete. Run the full testing script to reload data.' as status;

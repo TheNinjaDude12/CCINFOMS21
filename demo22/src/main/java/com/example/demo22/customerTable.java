@@ -409,6 +409,8 @@ public class customerTable {
                         "-fx-background-color: #3498db; " +
                                 "-fx-text-fill: white; " +
                                 "-fx-cursor: hand;"
+                                +"-fx-opacity: 0.8;\n" +
+                                "    -fx-cursor: hand;"
                 );
 
 

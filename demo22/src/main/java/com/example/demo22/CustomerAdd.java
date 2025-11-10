@@ -106,6 +106,16 @@ public class CustomerAdd {
             emailError.setVisible(true);
             isValid = false;
         }
+        else if(!isValidEmail(emailField.getText())) {  // ← Add email format check
+            emailError.setText("Invalid email format");
+            emailError.setVisible(true);
+            isValid = false;
+        }
+        else if(emailExists(emailField.getText())) {  // ← Add duplicate check
+            emailError.setText("Email already registered");
+            emailError.setVisible(true);
+            isValid = false;
+        }
         else {
             email = emailField.getText();
         }
@@ -170,6 +180,7 @@ public class CustomerAdd {
 
         } catch(SQLException e) {
             e.printStackTrace();
+
         }
     }
 
@@ -195,6 +206,7 @@ public class CustomerAdd {
     }
 
 
+
     public void back(ActionEvent event) throws IOException {
         System.out.println("works");
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("customerView.fxml")));
@@ -202,5 +214,37 @@ public class CustomerAdd {
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
+    }
+
+    private boolean emailExists(String email) {
+        try {
+            Connection connection = DriverManager.getConnection(
+                    "jdbc:mysql://127.0.0.1:3306/gamemanagementdatabase",
+                    "root", "thunder1515");
+
+            PreparedStatement checkEmail = connection.prepareStatement(
+                    "SELECT COUNT(*) FROM customer_record WHERE email = ?");
+            checkEmail.setString(1, email);
+            ResultSet rs = checkEmail.executeQuery();
+
+            if (rs.next() && rs.getInt(1) > 0) {
+                connection.close();
+                return true; // Email exists
+            }
+
+            connection.close();
+            return false; // Email doesn't exist
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
+    private boolean isValidEmail(String email) {
+        // Simple email validation
+        String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+        return email.matches(emailRegex);
     }
 }
