@@ -22,7 +22,7 @@ public class HelloController {
         welcomeText.setText("Welcome to JavaFX Application!");
     }
 
-    public void switchToGameView(ActionEvent event) throws IOException {
+    public void switchToCustomerView(ActionEvent event) throws IOException {
         System.out.println("works");
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("customerView.fxml")));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -38,4 +38,11 @@ public class HelloController {
         stage.setScene(scene);
         stage.show();
     }
+
+    public void switchToDeveloperView(ActionEvent event) throws IOException {
+        Stage newStage = new Stage();
+        new GameManagementApp().start(newStage);
+    }
+
+
 }
