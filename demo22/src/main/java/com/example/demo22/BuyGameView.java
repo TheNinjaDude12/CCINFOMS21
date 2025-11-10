@@ -81,6 +81,20 @@ public class BuyGameView {
                paymentField.setPromptText("Add Payment Method");
                Button addPaymentButton = new Button("Add");
                addPaymentButton.setOnAction(adder -> {
+                   String newPayment = paymentField.getText().trim();
+
+                   // Validation
+                   if (newPayment.isEmpty()) {
+                       showAlert(Alert.AlertType.WARNING, "Empty Input",
+                               "Please enter a payment method");
+                       return;
+                   }
+
+                   if (payArr.contains(newPayment)) {
+                       showAlert(Alert.AlertType.WARNING, "Duplicate",
+                               "This payment method already exists");
+                       return;
+                   }
                    System.out.println("Test");
                    payArr.remove(payArr.size()-1);
                    System.out.println("Checkpoint 1");

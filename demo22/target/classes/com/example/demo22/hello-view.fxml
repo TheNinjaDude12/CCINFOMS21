@@ -12,9 +12,9 @@
             <Font size="60.0" />
          </font>
       </Text>
-      <Button layoutX="238.0" layoutY="157.0" mnemonicParsing="false" onAction="#switchToGameView" prefHeight="85.0" prefWidth="256.0" text="Customer Record" />
+      <Button layoutX="238.0" layoutY="157.0" mnemonicParsing="false" onAction="#switchToCustomerView" prefHeight="85.0" prefWidth="256.0" text="Customer Record" />
       <Button layoutX="238.0" layoutY="385.0" mnemonicParsing="false" prefHeight="100.0" prefWidth="256.0" text="Button" />
-      <Button layoutX="238.0" layoutY="268.0" mnemonicParsing="false" prefHeight="92.0" prefWidth="256.0" text="Button" />
+      <Button layoutX="238.0" layoutY="268.0" mnemonicParsing="false" onAction="#switchToDeveloperView" prefHeight="92.0" prefWidth="256.0" text="Developer Record" />
       <Button layoutX="235.0" layoutY="516.0" mnemonicParsing="false" prefHeight="92.0" prefWidth="262.0" text="Button" />
       <Button layoutX="589.0" layoutY="157.0" mnemonicParsing="false" onAction="#switchToBuyView" prefHeight="85.0" prefWidth="270.0" text="Buy Game" />
    </children>
