@@ -72,6 +72,7 @@ public class GenerateCustomerReport {
                 }
                 else {
                     monthSpinner.setDisable(true);
+                    monthSpinner.setValueFactory(monthValueFactory);
                 }
                 monthSpinner.setEditable(true);
             }

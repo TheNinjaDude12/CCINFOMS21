@@ -64,6 +64,7 @@ public class BuyGameView {
         payArr.add("Credit Card");
         payArr.add("Gcash");
         payArr.add("Shoppee PayLater");
+        payArr.add("PayPal");
         payArr.add("Add Payment");
 
         ObservableList<String> payment = FXCollections.observableArrayList(payArr);
@@ -96,14 +97,9 @@ public class BuyGameView {
                        return;
                    }
                    System.out.println("Test");
-                   payArr.remove(payArr.size()-1);
-                   System.out.println("Checkpoint 1");
                    payArr.add(paymentField.getText());
-                   System.out.println("Checkpoint 2");
                    payArr.add("Add Payment");
-                   System.out.println("Checkpoint 3");
                    paymentSelector.setItems(FXCollections.observableArrayList(payArr));
-                   System.out.println("Checkpoint 4");
                    dialog.close();
 
 
