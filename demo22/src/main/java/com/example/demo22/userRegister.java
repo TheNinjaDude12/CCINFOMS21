@@ -7,7 +7,8 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.DatePicker;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -16,44 +17,59 @@ import java.io.IOException;
 import java.sql.*;
 import java.util.Objects;
 
-
-public class CustomerAdd {
+public class userRegister {
+    @FXML
+    private TextField emailField;
+    @FXML
+    private PasswordField passwordField;
     @FXML
     private TextField firstNameField;
-
     @FXML
     private TextField lastNameField;
-
-    @FXML
-    private  TextField emailField;
-
     @FXML
     private TextField countryField;
-
-    @FXML
-    private  DatePicker registerField;
-
     @FXML
     private TextField platformField;
+
+    @FXML
+    private Text passwordError;
+    @FXML
+    private Text emailError;
     @FXML
     private Text firstNameError;
     @FXML
     private Text lastNameError;
     @FXML
-    private  Text emailError;
-    @FXML
     private Text countryError;
     @FXML
-    private  Text registerError;
-     String firstName;
-     String lastName;
-     String email;
-     String platform;
-     int year;
-     int month;
-     int day;
+    private RadioButton showPasswordRadio;
+    @FXML
+    private TextField passwordTextField;
+
+    String firstName;
+    String lastName;
+    String email;
+    String platform;
+    String password;
+    int year;
+    int month;
+    int day;
     String registerDate;
-     String country;
+    String country;
+
+
+    public void initialize() {
+        passwordError.setVisible(false);
+        emailError.setVisible(false);
+        firstNameError.setVisible(false);
+        lastNameError.setVisible(false);
+        countryError.setVisible(false);
+        showPasswordRadio.setSelected(false);
+        passwordTextField.setDisable(true);
+
+
+    }
+
     public boolean canAddCustomer() {
         if(firstNameError.isVisible()) {
             firstNameError.setVisible(false);
@@ -66,9 +82,6 @@ public class CustomerAdd {
         }
         if(countryError.isVisible()) {
             countryError.setVisible(false);
-        }
-        if(registerError.isVisible()) {
-            registerError.setVisible(false);
         }
 
 
@@ -99,7 +112,15 @@ public class CustomerAdd {
             isValid = false;
         }
         else {
-             lastName = lastNameField.getText();
+            lastName = lastNameField.getText();
+        }
+
+        if(passwordField.getText().isEmpty() && passwordTextField.getText().isEmpty()) {
+            passwordError.setVisible(true);
+            passwordError.setText("Password must not be empty");
+        }
+        else {
+            password = passwordField.getText();
         }
         if(emailField.getText().isEmpty()) {
             emailError.setText("Email must not be empty");
@@ -119,17 +140,7 @@ public class CustomerAdd {
         else {
             email = emailField.getText();
         }
-        if(registerField.getValue() == null) {
-            registerError.setText("Register field must not be empty");
-            registerError.setVisible(true);
-            isValid = false;
-        }
-        else {
-            year = registerField.getValue().getYear();
-            month = registerField.getValue().getMonthValue();
-            day = registerField.getValue().getDayOfMonth();
-            registerDate = year + "-" + month + "-" + day;
-        }
+
         if(countryField.getText().isEmpty()) {
             countryError.setText("Country must not be empty");
             countryError.setVisible(true);
@@ -148,9 +159,7 @@ public class CustomerAdd {
 
         return isValid;
     }
-
-    @FXML
-    public  void addCustomerData() {
+    public void addCustomer(ActionEvent event) throws IOException {
         boolean canAdd = canAddCustomer();
         if(!canAdd) {
             return;
@@ -166,17 +175,34 @@ public class CustomerAdd {
                     "root", "thunder1515");
 
             PreparedStatement insertCustomer = connection.prepareStatement("INSERT INTO customer_record(last_name, first_name, email, registration_date, country, preferred_platform, password) " +
-                    "VALUES(?,?,?,?,?,?,?)");
+                    "VALUES(?,?,?,CURDATE(),?,?,?)");
             insertCustomer.setString(1, lastName);
             insertCustomer.setString(2, firstName);
             insertCustomer.setString(3, email);
-            insertCustomer.setString(4, registerDate);
-            insertCustomer.setString(5, country);
-            insertCustomer.setString(6, platform);
-            String password = lastNameField.getText() + 123;
-            insertCustomer.setString(7, password);
+            insertCustomer.setString(4, country);
+            if(!platform.isEmpty()) {
+                insertCustomer.setString(5, platform);
+            }
+            else {
+                insertCustomer.setString(5, "None");
+            }
+
+            String password;
+            if(showPasswordRadio.isSelected()) {
+                password = passwordTextField.getText();
+            }
+            else {
+                password = passwordField.getText();
+            }
+            insertCustomer.setString(6, password);
             insertCustomer.executeUpdate();
             showSuccessAlert();
+            System.out.println("works");
+            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("userView.fxml")));
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
 
 
 
@@ -184,8 +210,26 @@ public class CustomerAdd {
             e.printStackTrace();
 
         }
-    }
 
+
+    }
+    public void showPassword() {
+
+
+        if(showPasswordRadio.isSelected()) {
+            passwordField.setVisible(false);
+            passwordTextField.setVisible(true);
+            passwordTextField.setText(passwordField.getText());
+            passwordTextField.setDisable(false);
+        }
+        else {
+            passwordField.setVisible(true);
+            passwordTextField.setVisible(false);
+            passwordField.setText(passwordTextField.getText());
+            passwordTextField.setDisable(true);
+
+        }
+    }
 
     public static boolean isInteger(String str) {
         if (str == null || str.isEmpty()) {
@@ -199,23 +243,11 @@ public class CustomerAdd {
         }
     }
 
-    private void showSuccessAlert() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Success");
-        alert.setHeaderText(null);
-        alert.setContentText("Customer added successfully!");
-        alert.showAndWait();
-    }
 
-
-
-    public void back(ActionEvent event) throws IOException {
-        System.out.println("works");
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("customerView.fxml")));
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
-        stage.show();
+    private boolean isValidEmail(String email) {
+        // Simple email validation
+        String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+        return email.matches(emailRegex);
     }
 
     private boolean emailExists(String email) {
@@ -242,11 +274,14 @@ public class CustomerAdd {
             return false;
         }
     }
-
-
-    private boolean isValidEmail(String email) {
-        // Simple email validation
-        String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
-        return email.matches(emailRegex);
+    private void showSuccessAlert() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Success");
+        alert.setHeaderText(null);
+        alert.setContentText("Customer added successfully!");
+        alert.showAndWait();
     }
+
+
+
 }
