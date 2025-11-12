@@ -165,20 +165,9 @@ public class GenerateCustomerReport {
                     "root", "thunder1515");
 
             PreparedStatement pstmt = conn.prepareStatement(
-                    "SELECT " +
-                            "    c.customer_id, " +
-                            "    c.first_name, " +
-                            "    c.last_name, " +
-                            "    c.email, " +
-                            "    COUNT(t.transaction_id) as total_purchases, " +
-                            "    SUM(t.amount) as total_spent " +
-                            "FROM customer_record c " +
-                            "JOIN transaction_log t ON c.customer_id = t.customer_id " +
-                            "WHERE YEAR(t.purchase_date) = ? " +
-                            "GROUP BY c.customer_id, c.first_name, c.last_name, c.email " +
-                            "ORDER BY total_spent DESC");
+                    "SELECT customer_id, first_name, last_name, email, total_purchases, total_spent FROM customerEngagementReportYear WHERE YEAR = ? ");
 
-            pstmt.setInt(1, year);
+                    pstmt.setInt(1, year);
             ResultSet rs = pstmt.executeQuery();
 
             while (rs.next()) {
@@ -211,18 +200,7 @@ public class GenerateCustomerReport {
                     "root", "thunder1515");
 
             PreparedStatement pstmt = conn.prepareStatement(
-                    "SELECT " +
-                            "    c.customer_id, " +
-                            "    c.first_name, " +
-                            "    c.last_name, " +
-                            "    c.email, " +
-                            "    COUNT(t.transaction_id) as total_purchases, " +
-                            "    SUM(t.amount) as total_spent " +
-                            "FROM customer_record c " +
-                            "JOIN transaction_log t ON c.customer_id = t.customer_id " +
-                            "WHERE YEAR(t.purchase_date) = ? AND MONTH(t.purchase_date) = ? " +
-                            "GROUP BY c.customer_id, c.first_name, c.last_name, c.email " +
-                            "ORDER BY total_spent DESC");
+                    "SELECT customer_id, first_name, last_name, email, total_purchases, total_spent FROM customerEngagementReportMonth WHERE YEAR = ? AND MONTH = ?");
 
             pstmt.setInt(1, year);
             pstmt.setInt(2, month);
