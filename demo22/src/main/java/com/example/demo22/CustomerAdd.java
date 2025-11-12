@@ -169,7 +169,7 @@ public class CustomerAdd {
                     "VALUES(?,?,?,?,?,?,?)");
             insertCustomer.setString(1, lastName);
             insertCustomer.setString(2, firstName);
-            insertCustomer.setString(3, email);
+            insertCustomer.setString(3, email.toLowerCase());
             insertCustomer.setString(4, registerDate);
             insertCustomer.setString(5, country);
             insertCustomer.setString(6, platform);

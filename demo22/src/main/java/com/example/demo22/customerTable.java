@@ -2,6 +2,8 @@ package com.example.demo22;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -26,7 +28,8 @@ import java.util.Objects;
 import java.util.Optional;
 
 public class customerTable {
-
+    @FXML
+    private TextField searchBar;
     @FXML
     private TableView customerTable;
     public static class Person {
@@ -150,6 +153,27 @@ public class customerTable {
                         resultSet.getDouble("total_spent"), resultSet.getInt("games_owned")));
 
             }
+
+            FilteredList<Person> filteredData = new FilteredList<>(data, b -> true);
+            searchBar.textProperty().addListener((observable, oldValue, newValue) -> {
+              filteredData.setPredicate(Person -> {
+                  if (newValue == null || newValue.isEmpty()) {
+                      return true;
+                  }
+                  String searchKeyword = newValue.toLowerCase();
+                  if(Person.getLastName().toLowerCase().indexOf(searchKeyword) > -1) {
+                      return true;
+                  }
+                  return false;
+              });
+
+
+                SortedList<Person> sortedData = new SortedList<>(filteredData);
+                sortedData.comparatorProperty().bind(customerTable.comparatorProperty());
+                customerTable.setItems(sortedData);
+            });
+
+
 
             connection.close();
 

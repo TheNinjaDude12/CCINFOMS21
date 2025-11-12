@@ -132,7 +132,7 @@ public class userRegister {
             emailError.setVisible(true);
             isValid = false;
         }
-        else if(emailExists(emailField.getText())) {  // ← Add duplicate check
+        else if(emailExists(emailField.getText().toLowerCase())) {  // ← Add duplicate check
             emailError.setText("Email already registered");
             emailError.setVisible(true);
             isValid = false;
@@ -178,7 +178,7 @@ public class userRegister {
                     "VALUES(?,?,?,CURDATE(),?,?,?)");
             insertCustomer.setString(1, lastName);
             insertCustomer.setString(2, firstName);
-            insertCustomer.setString(3, email);
+            insertCustomer.setString(3, email.toLowerCase());
             insertCustomer.setString(4, country);
             if(!platform.isEmpty()) {
                 insertCustomer.setString(5, platform);
