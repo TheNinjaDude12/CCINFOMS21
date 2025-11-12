@@ -7,62 +7,32 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
+
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="466.0" prefWidth="735.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo22.CustomerAdd">
    <children>
-      <TextField fx:id="lastNameField" layoutX="257.0" layoutY="100.0" prefHeight="32.0" prefWidth="174.0" />
-      <TextField fx:id="firstNameField" layoutX="258.0" layoutY="41.0" prefHeight="32.0" prefWidth="174.0" />
-      <DatePicker fx:id="registerField" editable="false" layoutX="257.0" layoutY="226.0" prefHeight="32.0" prefWidth="176.0" />
-      <TextField fx:id="emailField" layoutX="259.0" layoutY="145.0" prefHeight="32.0" prefWidth="174.0" />
-      <Text layoutX="72.0" layoutY="66.0" strokeType="OUTSIDE" strokeWidth="0.0" text="First Name">
+      <TextField fx:id="lastNameField" layoutX="259.0" layoutY="116.0" prefHeight="25.0" prefWidth="258.0" />
+      <TextField fx:id="firstNameField" layoutX="259.0" layoutY="74.0" prefHeight="25.0" prefWidth="258.0" />
+      <DatePicker fx:id="registerField" editable="false" layoutX="257.0" layoutY="226.0" prefHeight="25.0" prefWidth="260.0" />
+      <TextField fx:id="emailField" layoutX="259.0" layoutY="157.0" prefHeight="25.0" prefWidth="258.0" />
+      <Text layoutX="167.0" layoutY="91.0" strokeType="OUTSIDE" strokeWidth="0.0" text="First Name" />
+      <Text layoutX="167.0" layoutY="133.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Last Name" />
+      <Text layoutX="165.0" layoutY="243.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Register Date" />
+      <Text layoutX="167.0" layoutY="174.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Email" />
+      <Text layoutX="152.0" layoutY="288.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Preferred Platform" />
+      <TextField fx:id="platformField" layoutX="257.0" layoutY="271.0" prefHeight="25.0" prefWidth="260.0" />
+      <Button layoutX="293.0" layoutY="327.0" mnemonicParsing="false" onAction="#addCustomerData" prefHeight="30.0" prefWidth="150.0" text="Add Customer" />
+      <Text fx:id="firstNameError" fill="RED" layoutX="536.0" layoutY="91.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" visible="false" wrappingWidth="174.0" />
+      <Text fx:id="lastNameError" fill="RED" layoutX="536.0" layoutY="133.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" visible="false" wrappingWidth="174.0" />
+      <Text fx:id="emailError" fill="RED" layoutX="536.0" layoutY="174.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" visible="false" wrappingWidth="174.0" />
+      <Text fx:id="registerError" fill="RED" layoutX="536.0" layoutY="243.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" visible="false" wrappingWidth="174.0" />
+      <TextField fx:id="countryField" layoutX="257.0" layoutY="190.0" prefHeight="25.0" prefWidth="258.0" />
+      <Text layoutX="167.0" layoutY="207.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Country" />
+      <Text fx:id="countryError" fill="RED" layoutX="536.0" layoutY="207.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Text" visible="false" wrappingWidth="174.0" />
+      <Text layoutX="230.0" layoutY="46.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Add New Customer">
          <font>
-            <Font name="Century Schoolbook" size="24.0" />
-         </font></Text>
-      <Text layoutX="72.0" layoutY="124.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Last Name">
-         <font>
-            <Font size="22.0" />
-         </font></Text>
-      <Text layoutX="72.0" layoutY="252.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Register Date">
-         <font>
-            <Font name="Century Schoolbook" size="21.0" />
-         </font></Text>
-      <Text layoutX="72.0" layoutY="170.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Email">
-         <font>
-            <Font name="Century Schoolbook" size="21.0" />
-         </font></Text>
-      <Text layoutX="72.0" layoutY="297.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Preferred Platform">
-         <font>
-            <Font name="Century Schoolbook" size="19.0" />
-         </font></Text>
-      <TextField fx:id="platformField" layoutX="259.0" layoutY="272.0" prefHeight="35.0" prefWidth="174.0" />
-      <Button layoutX="229.0" layoutY="334.0" mnemonicParsing="false" onAction="#addCustomerData" prefHeight="49.0" prefWidth="233.0" style="-fx-background-color: #2ecc71;" text="Add Customer" textOverrun="CLIP">
-         <font>
-            <Font name="Dubai Medium" size="26.0" />
-         </font></Button>
-      <Text fx:id="firstNameError" fill="#da0000" layoutX="444.0" layoutY="63.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="233.0">
-         <font>
-            <Font size="17.0" />
-         </font></Text>
-      <Text fx:id="lastNameError" fill="#da0000" layoutX="445.0" layoutY="122.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="248.0">
-         <font>
-            <Font size="17.0" />
-         </font></Text>
-      <Text fx:id="emailError" fill="#da0000" layoutX="444.0" layoutY="168.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="233.0">
-         <font>
-            <Font size="17.0" />
-         </font></Text>
-      <Text fx:id="registerError" fill="#da0000" layoutX="452.0" layoutY="245.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="233.0">
-         <font>
-            <Font size="17.0" />
-         </font></Text>
-      <TextField fx:id="countryField" layoutX="257.0" layoutY="189.0" prefHeight="29.0" prefWidth="174.0" />
-      <Text layoutX="72.0" layoutY="210.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Country">
-         <font>
-            <Font name="Century Schoolbook" size="21.0" />
-         </font></Text>
-      <Text fx:id="countryError" fill="#d71313" layoutX="444.0" layoutY="209.0" strokeType="OUTSIDE" strokeWidth="0.0" wrappingWidth="274.0">
-         <font>
-            <Font size="17.0" />
-         </font></Text>
-      <Button layoutX="27.0" layoutY="391.0" mnemonicParsing="false" onAction="#back" prefHeight="49.0" prefWidth="174.0" text="Back" />
+            <Font size="30.0" />
+         </font>
+      </Text>
+      <Button layoutX="33.0" layoutY="404.0" mnemonicParsing="false" onAction="#back" prefHeight="30.0" prefWidth="85.0" text="Back" />
    </children>
 </AnchorPane>
