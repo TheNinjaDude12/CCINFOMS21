@@ -44,7 +44,7 @@ INSERT INTO game_record (game_id, title, genre, release_date, platform, price, t
 -- Password for all test accounts: "password123"
 -- Hash: ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f
 
-INSERT INTO customer_record (customer_id, last_name, first_name, email, password_hash, registration_date, country, preferred_platform, total_spent, games_owned) VALUES
+INSERT INTO customer_record (customer_id, last_name, first_name, email, password, registration_date, country, preferred_platform, total_spent, games_owned) VALUES
 (1, 'Smith', 'Amber', 'amber.smith@email.com', '1234', '2024-02-01', 'United States', 'PC', 0, 0),
 (2, 'Garcia', 'Maria', 'maria.garcia@email.com', '1234', '2025-01-28', 'Spain', 'PlayStation', 0, 0),
 (3, 'Johnson', 'Liam', 'liam.johnson@email.com', '1234', '2024-03-10', 'Canada', 'Xbox', 0, 0),
@@ -238,26 +238,6 @@ SELECT
     (SELECT COUNT(*) FROM transaction_log WHERE status = 'Paid') as paid_transactions,
     (SELECT COUNT(*) FROM transaction_log WHERE status = 'Refunded') as refunded_transactions,
     (SELECT SUM(total_spent) FROM customer_record) as total_revenue;
-```
 
 ---
 
-## **3. Test Login Credentials:**
-
-**All test accounts have the same password for easy testing:**
-```
-Email: amber.smith@email.com
-Password: password123
-
-Email: maria.garcia@email.com  
-Password: password123
-
-Email: liam.johnson@email.com
-Password: password123
-
-... (etc for all 10 customers)
-```
-
-**Password Hash (SHA-256):**
-```
-ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f
