@@ -50,26 +50,20 @@ public class GenerateCustomerReport {
         setupTableColumns();
 
         // Year radio handler
-        yearRadio.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                // Enable only year spinner
-                yearSpinner.setDisable(false);
-                yearSpinner.setEditable(true);
-                monthSpinner.setDisable(true);  // Disable month when year is selected
-            }
+        yearRadio.setOnAction(actionEvent -> {
+            // Enable only year spinner
+            yearSpinner.setDisable(false);
+            yearSpinner.setEditable(true);
+            monthSpinner.setDisable(true);  // Disable month when year is selected
         });
 
         // Month radio handler
-        monthRadio.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                // Enable both year AND month spinners
-                yearSpinner.setDisable(false);
-                yearSpinner.setEditable(true);
-                monthSpinner.setDisable(false);
-                monthSpinner.setEditable(true);
-            }
+        monthRadio.setOnAction(actionEvent -> {
+            // Enable both year AND month spinners
+            yearSpinner.setDisable(false);
+            yearSpinner.setEditable(true);
+            monthSpinner.setDisable(false);
+            monthSpinner.setEditable(true);
         });
     }
     private void setupTableColumns() {
@@ -101,12 +95,7 @@ public class GenerateCustomerReport {
     public void setYearSpinner() {
         yearSpinner.setDisable(false);
         yearSpinner.setEditable(true);
-        yearSpinner.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent mouseEvent) {
-                year = yearSpinner.getValue();
-            }
-        });
+        yearSpinner.setOnMouseClicked(mouseEvent -> year = yearSpinner.getValue());
     }
 
     public void generateReport() {
@@ -137,7 +126,7 @@ public class GenerateCustomerReport {
             showAlert(Alert.AlertType.INFORMATION, "No Data",
                     "No transactions found for the selected period.");
         } else {
-            String period = "";
+            String period;
             if(yearRadio.isSelected() && !monthRadio.isSelected()) {
                 period = "Year " + year;
 
@@ -152,41 +141,36 @@ public class GenerateCustomerReport {
 
     private ObservableList<CustomerEngagement> generateYearReport(int year) {
         ObservableList<CustomerEngagement> data = FXCollections.observableArrayList();
+        String sql = "SELECT " +
+                "    c.customer_id, " +
+                "    c.first_name, " +
+                "    c.last_name, " +
+                "    c.email, " +
+                "    COUNT(t.transaction_id) as total_purchases, " +
+                "    SUM(t.amount) as total_spent " +
+                "FROM customer_record c " +
+                "JOIN transaction_log t ON c.customer_id = t.customer_id " +
+                "WHERE YEAR(t.purchase_date) = ? " +
+                "GROUP BY c.customer_id, c.first_name, c.last_name, c.email " +
+                "ORDER BY total_spent DESC";
 
-        try {
-            Connection conn = DriverManager.getConnection(
-                    "jdbc:mysql://127.0.0.1:3306/gamemanagementdatabase",
-                    "root", "thunder1515");
-
-            PreparedStatement pstmt = conn.prepareStatement(
-                    "SELECT " +
-                            "    c.customer_id, " +
-                            "    c.first_name, " +
-                            "    c.last_name, " +
-                            "    c.email, " +
-                            "    COUNT(t.transaction_id) as total_purchases, " +
-                            "    SUM(t.amount) as total_spent " +
-                            "FROM customer_record c " +
-                            "JOIN transaction_log t ON c.customer_id = t.customer_id " +
-                            "WHERE YEAR(t.purchase_date) = ? " +
-                            "GROUP BY c.customer_id, c.first_name, c.last_name, c.email " +
-                            "ORDER BY total_spent DESC");
+        try (Connection conn = DriverManager.getConnection(
+                "jdbc:mysql://127.0.0.1:3307/gamemanagementdatabase",
+                "root", "");
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, year);
-            ResultSet rs = pstmt.executeQuery();
-
-            while (rs.next()) {
-                data.add(new CustomerEngagement(
-                        rs.getInt("customer_id"),
-                        rs.getString("first_name") + " " + rs.getString("last_name"),
-                        rs.getString("email"),
-                        rs.getInt("total_purchases"),
-                        rs.getDouble("total_spent")
-                ));
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    data.add(new CustomerEngagement(
+                            rs.getInt("customer_id"),
+                            rs.getString("first_name") + " " + rs.getString("last_name"),
+                            rs.getString("email"),
+                            rs.getInt("total_purchases"),
+                            rs.getDouble("total_spent")
+                    ));
+                }
             }
-
-            conn.close();
-
         } catch (SQLException e) {
             e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Database Error",
@@ -198,42 +182,37 @@ public class GenerateCustomerReport {
 
     private ObservableList<CustomerEngagement> generateMonthReport(int year, int month) {
         ObservableList<CustomerEngagement> data = FXCollections.observableArrayList();
+        String sql = "SELECT " +
+                "    c.customer_id, " +
+                "    c.first_name, " +
+                "    c.last_name, " +
+                "    c.email, " +
+                "    COUNT(t.transaction_id) as total_purchases, " +
+                "    SUM(t.amount) as total_spent " +
+                "FROM customer_record c " +
+                "JOIN transaction_log t ON c.customer_id = t.customer_id " +
+                "WHERE YEAR(t.purchase_date) = ? AND MONTH(t.purchase_date) = ? " +
+                "GROUP BY c.customer_id, c.first_name, c.last_name, c.email " +
+                "ORDER BY total_spent DESC";
 
-        try {
-            Connection conn = DriverManager.getConnection(
-                    "jdbc:mysql://127.0.0.1:3306/gamemanagementdatabase",
-                    "root", "thunder1515");
-
-            PreparedStatement pstmt = conn.prepareStatement(
-                    "SELECT " +
-                            "    c.customer_id, " +
-                            "    c.first_name, " +
-                            "    c.last_name, " +
-                            "    c.email, " +
-                            "    COUNT(t.transaction_id) as total_purchases, " +
-                            "    SUM(t.amount) as total_spent " +
-                            "FROM customer_record c " +
-                            "JOIN transaction_log t ON c.customer_id = t.customer_id " +
-                            "WHERE YEAR(t.purchase_date) = ? AND MONTH(t.purchase_date) = ? " +
-                            "GROUP BY c.customer_id, c.first_name, c.last_name, c.email " +
-                            "ORDER BY total_spent DESC");
+        try (Connection conn = DriverManager.getConnection(
+                "jdbc:mysql://127.0.0.1:3307/gamemanagementdatabase",
+                "root", "");
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
             pstmt.setInt(1, year);
             pstmt.setInt(2, month);
-            ResultSet rs = pstmt.executeQuery();
-
-            while (rs.next()) {
-                data.add(new CustomerEngagement(
-                        rs.getInt("customer_id"),
-                        rs.getString("first_name") + " " + rs.getString("last_name"),
-                        rs.getString("email"),
-                        rs.getInt("total_purchases"),
-                        rs.getDouble("total_spent")
-                ));
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    data.add(new CustomerEngagement(
+                            rs.getInt("customer_id"),
+                            rs.getString("first_name") + " " + rs.getString("last_name"),
+                            rs.getString("email"),
+                            rs.getInt("total_purchases"),
+                            rs.getDouble("total_spent")
+                    ));
+                }
             }
-
-            conn.close();
-
         } catch (SQLException e) {
             e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Database Error",
@@ -253,11 +232,11 @@ public class GenerateCustomerReport {
 
     // Inner class for table data
     public static class CustomerEngagement {
-        private int customerId;
-        private String customerName;
-        private String email;
-        private int totalPurchases;
-        private double totalSpent;
+        private final int customerId;
+        private final String customerName;
+        private final String email;
+        private final int totalPurchases;
+        private final double totalSpent;
 
         public CustomerEngagement(int customerId, String customerName, String email,
                                   int totalPurchases, double totalSpent) {
