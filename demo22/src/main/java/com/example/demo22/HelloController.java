@@ -40,8 +40,12 @@ public class HelloController {
     }
 
     public void switchToDeveloperView(ActionEvent event) throws IOException {
-        Stage newStage = new Stage();
-        new GameManagementApp().start(newStage);
+        System.out.println("works");
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("developerView.fxml")));
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
     }
 
 
