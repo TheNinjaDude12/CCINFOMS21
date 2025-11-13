@@ -28,7 +28,7 @@ import java.util.Optional;
 public class customerTable {
 
     @FXML
-    private TableView customerTable;
+    private TableView<Person> customerTable; // Use Person type
     public static class Person {
         private int id;
         private String firstName;
@@ -102,60 +102,29 @@ public class customerTable {
         public void setPlatform(String platform) {
             this.platform = platform;
         }
-        public void setSpent(float spent) {
+        public void setSpent(double spent) { // Changed to double
             this.spent = spent;
         }
         public void setGames(int games) {
             this.games = games;
         }
-
-
     }
+
     public void initialize() {
 
-        TableColumn customerID = new TableColumn("ID");
-        TableColumn customerFirstName = new TableColumn("First Name");
-        TableColumn customerLastName = new TableColumn("Last Name");
-        TableColumn customerEmail = new TableColumn("Email");
-        TableColumn customerDate = new TableColumn("Registration Date");
-        TableColumn customerCountry = new TableColumn("Country");
-        TableColumn customerPlatform = new TableColumn("Preferred Platform");
-        TableColumn customerSpent = new TableColumn("Total Spent");
-        TableColumn customerGames = new TableColumn("Games Owned");
+        TableColumn<Person, Integer> customerID = new TableColumn<>("ID");
+        TableColumn<Person, String> customerFirstName = new TableColumn<>("First Name");
+        TableColumn<Person, String> customerLastName = new TableColumn<>("Last Name");
+        TableColumn<Person, String> customerEmail = new TableColumn<>("Email");
+        TableColumn<Person, String> customerDate = new TableColumn<>("Registration Date");
+        TableColumn<Person, String> customerCountry = new TableColumn<>("Country");
+        TableColumn<Person, String> customerPlatform = new TableColumn<>("Preferred Platform");
+        TableColumn<Person, Double> customerSpent = new TableColumn<>("Total Spent"); // Use Double
+        TableColumn<Person, Integer> customerGames = new TableColumn<>("Games Owned");
 
+        customerTable.getColumns().clear(); // Clear existing if any
         customerTable.getColumns().addAll(customerID, customerFirstName, customerLastName,
                 customerEmail, customerDate, customerCountry, customerPlatform, customerSpent, customerGames);
-
-        ObservableList<customerTable.Person> data = FXCollections.observableArrayList();
-        customerTable.setEditable(true);
-
-
-
-
-        try {
-            Connection connection = DriverManager.getConnection(
-                    "jdbc:mysql://127.0.0.1:3306/gamemanagementdatabase",
-                    "root", "thunder1515");
-
-            PreparedStatement pstmt = connection.prepareStatement(
-                    "SELECT * FROM customer_record");
-
-            ResultSet resultSet = pstmt.executeQuery();
-
-            while (resultSet.next()) {
-                data.add(new customerTable.Person(resultSet.getInt("customer_id"), resultSet.getString("first_name"),
-                        resultSet.getString("last_name"), resultSet.getString("email"),
-                        resultSet.getString("registration_date"), resultSet.getString("country"),
-                        resultSet.getString("preferred_platform"),
-                        resultSet.getDouble("total_spent"), resultSet.getInt("games_owned")));
-
-            }
-
-            connection.close();
-
-        } catch(SQLException e) {
-            e.printStackTrace();
-        }
 
         customerID.setCellValueFactory(new PropertyValueFactory<>("id"));
         customerFirstName.setCellValueFactory(new PropertyValueFactory<>("firstName"));
@@ -166,90 +135,76 @@ public class customerTable {
         customerPlatform.setCellValueFactory(new PropertyValueFactory<>("platform"));
         customerSpent.setCellValueFactory(new PropertyValueFactory<>("spent"));
         customerGames.setCellValueFactory(new PropertyValueFactory<>("games"));
-        customerTable.setItems(data);
-        setupActionButtonColumn();
 
-        customerLastName.setCellFactory(TextFieldTableCell.forTableColumn());
-        customerEmail.setCellFactory(TextFieldTableCell.forTableColumn());
-        customerDate.setCellFactory(TextFieldTableCell.forTableColumn());
-        customerCountry.setCellFactory(TextFieldTableCell.forTableColumn());
-        customerPlatform.setCellFactory(TextFieldTableCell.forTableColumn());
+        loadCustomers(); // Load data
+        
+        customerTable.setEditable(true);
+        setupEditableColumns(); // Setup editing
+        setupActionButtonColumn(); // Setup buttons
+    }
 
-
-
+    private void setupEditableColumns() {
+        // First Name
+        TableColumn<Person, String> customerFirstName = (TableColumn<Person, String>) customerTable.getColumns().get(1);
         customerFirstName.setCellFactory(TextFieldTableCell.forTableColumn());
-        customerFirstName.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Person, String>>() {
-
-            @Override
-            public void handle(TableColumn.CellEditEvent<Person, String> t) {
-               if(!checkIfValidName( t.getNewValue())) {
-                   Person person = t.getRowValue();
-                   person.setFirstName(t.getOldValue());
-               }
-               else {
-                   Person person = t.getRowValue();
-                   person.setFirstName(t.getNewValue());
-                   alterCustomerData(person.getFirstName(), person.getId(), "first_name");
-               }
+        customerFirstName.setOnEditCommit(t -> {
+            if (checkIfValidName(t.getNewValue())) {
+                Person person = t.getRowValue();
+                person.setFirstName(t.getNewValue());
+                alterCustomerData(person.getFirstName(), person.getId(), "first_name");
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Invalid Input", "First name cannot be empty or a number.");
+                t.getTableView().getItems().set(t.getTablePosition().getRow(), t.getRowValue()); // Revert
             }
         });
 
+        // Last Name
+        TableColumn<Person, String> customerLastName = (TableColumn<Person, String>) customerTable.getColumns().get(2);
         customerLastName.setCellFactory(TextFieldTableCell.forTableColumn());
-        customerLastName.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Person, String>>() {
-            @Override
-            public void handle(TableColumn.CellEditEvent<Person, String> t) {
-                if(!checkIfValidName( t.getNewValue())) {
-                    Person person = t.getRowValue();
-                    person.setLastName(t.getOldValue());
-                }
-                else {
-                    Person person = t.getRowValue();
-                    person.setLastName(t.getNewValue());
-                    alterCustomerData(person.getLastName(), person.getId(), "last_name");
-                }
-
+        customerLastName.setOnEditCommit(t -> {
+            if (checkIfValidName(t.getNewValue())) {
+                Person person = t.getRowValue();
+                person.setLastName(t.getNewValue());
+                alterCustomerData(person.getLastName(), person.getId(), "last_name");
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Invalid Input", "Last name cannot be empty or a number.");
+                t.getTableView().getItems().set(t.getTablePosition().getRow(), t.getRowValue()); // Revert
             }
         });
 
+        // Email
+        TableColumn<Person, String> customerEmail = (TableColumn<Person, String>) customerTable.getColumns().get(3);
         customerEmail.setCellFactory(TextFieldTableCell.forTableColumn());
-        customerEmail.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Person, String>>() {
-            @Override
-            public void handle(TableColumn.CellEditEvent<Person, String> t) {
-                if(!checkIfValidName( t.getNewValue())) {
-                    Person person = t.getRowValue();
-                    person.setEmail(t.getOldValue());
-                }
-                else {
-                    Person person = t.getRowValue();
-                    person.setEmail(t.getNewValue());
-                    alterCustomerData(person.getEmail(), person.getId(), "email");
-                }
-
+        customerEmail.setOnEditCommit(t -> {
+            if (t.getNewValue() != null && !t.getNewValue().isEmpty() && t.getNewValue().contains("@")) {
+                Person person = t.getRowValue();
+                person.setEmail(t.getNewValue());
+                alterCustomerData(person.getEmail(), person.getId(), "email");
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Invalid Input", "Email cannot be empty and must be valid.");
+                t.getTableView().getItems().set(t.getTablePosition().getRow(), t.getRowValue()); // Revert
             }
         });
 
-        customerDate.setCellFactory(column -> new TableCell<Person, String>() {
+        // Registration Date
+        TableColumn<Person, String> customerDate = (TableColumn<Person, String>) customerTable.getColumns().get(4);
+        customerDate.setCellFactory(column -> new TableCell<>() {
             private final DatePicker datePicker = new DatePicker();
-
             {
-                // Configure DatePicker
                 datePicker.setOnAction(event -> {
                     if (datePicker.getValue() != null) {
                         commitEdit(datePicker.getValue().toString());
                     }
                 });
-
                 datePicker.focusedProperty().addListener((obs, wasFocused, isNowFocused) -> {
                     if (!isNowFocused && datePicker.getValue() != null) {
                         commitEdit(datePicker.getValue().toString());
                     }
                 });
             }
-
             @Override
             protected void updateItem(String item, boolean empty) {
                 super.updateItem(item, empty);
-
                 if (empty || item == null) {
                     setText(null);
                     setGraphic(null);
@@ -264,21 +219,17 @@ public class customerTable {
                     }
                 }
             }
-
             @Override
             public void startEdit() {
                 super.startEdit();
-
                 String currentValue = getItem();
                 if (currentValue != null) {
                     datePicker.setValue(LocalDate.parse(currentValue));
                 }
-
                 setText(null);
                 setGraphic(datePicker);
                 datePicker.requestFocus();
             }
-
             @Override
             public void cancelEdit() {
                 super.cancelEdit();
@@ -286,111 +237,54 @@ public class customerTable {
                 setGraphic(null);
             }
         });
-
-        customerDate.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Person, String>>() {
-            @Override
-            public void handle(TableColumn.CellEditEvent<Person, String> event) {
-                Person person = event.getTableView().getItems().get(event.getTablePosition().getRow());
-                String newDate = event.getNewValue();
-
-                person.setDate(newDate);
-                String date = person.getDate();
-                alterCustomerData(date, person.getId(), "registration_date");
-            }
+        customerDate.setOnEditCommit(event -> {
+            Person person = event.getRowValue();
+            String newDate = event.getNewValue();
+            person.setDate(newDate);
+            alterCustomerData(person.getDate(), person.getId(), "registration_date");
         });
 
-        customerPlatform.setCellFactory(TextFieldTableCell.forTableColumn());
-        customerPlatform.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Person, String>>() {
-            @Override
-            public void handle(TableColumn.CellEditEvent<Person, String> t) {
-                if(!checkIfValidName( t.getNewValue())) {
-                    Person person = t.getRowValue();
-                    person.setPlatform(t.getOldValue());
-                }
-                else {
-                    Person person = t.getRowValue();
-                    person.setPlatform(t.getNewValue());
-                    alterCustomerData(person.getPlatform(), person.getId(), "platform");
-                }
-
-            }
-        });
-
+        // Country
+        TableColumn<Person, String> customerCountry = (TableColumn<Person, String>) customerTable.getColumns().get(5);
         customerCountry.setCellFactory(TextFieldTableCell.forTableColumn());
-        customerCountry.setOnEditCommit(new EventHandler<TableColumn.CellEditEvent<Person, String>>() {
-            @Override
-            public void handle(TableColumn.CellEditEvent<Person, String> t) {
-                if(!checkIfValidName( t.getNewValue())) {
-                    Person person = t.getRowValue();
-                    person.setCountry(t.getOldValue());
-                }
-                else {
-                    Person person = t.getRowValue();
-                    person.setCountry(t.getNewValue());
-                    alterCustomerData(person.getCountry(), person.getId(), "country");
-                }
-
+        customerCountry.setOnEditCommit(t -> {
+            if (checkIfValidName(t.getNewValue())) {
+                Person person = t.getRowValue();
+                person.setCountry(t.getNewValue());
+                alterCustomerData(person.getCountry(), person.getId(), "country");
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Invalid Input", "Country cannot be empty or a number.");
+                t.getTableView().getItems().set(t.getTablePosition().getRow(), t.getRowValue()); // Revert
             }
         });
 
+        // Platform
+        TableColumn<Person, String> customerPlatform = (TableColumn<Person, String>) customerTable.getColumns().get(6);
+        customerPlatform.setCellFactory(TextFieldTableCell.forTableColumn());
+        customerPlatform.setOnEditCommit(t -> {
+            Person person = t.getRowValue();
+            person.setPlatform(t.getNewValue()); // Platform can be empty
+            alterCustomerData(person.getPlatform(), person.getId(), "preferred_platform");
+        });
     }
 
+
     public void alterCustomerData(String text, int id, String field) {
-        try {
-            Connection connection = DriverManager.getConnection(
-                    "jdbc:mysql://127.0.0.1:3306/gamemanagementdatabase",
-                    "root", "thunder1515");
-            if(field.equals("first_name")) {
-                PreparedStatement pstmt = connection.prepareStatement(
-                        "UPDATE customer_record SET first_name = ? WHERE customer_id = ?");
-                pstmt.setString(1, text);
-                pstmt.setInt(2, id);
-                pstmt.executeUpdate();
+        // Use String.format to safely insert the column name
+        String sql = String.format("UPDATE customer_record SET %s = ? WHERE customer_id = ?", field);
+        
+        try (Connection connection = DriverManager.getConnection(
+                "jdbc:mysql://127.0.0.1:3307/gamemanagementdatabase",
+                "root", "");
+             PreparedStatement pstmt = connection.prepareStatement(sql)) {
 
-            }
-            else if (field.equals("last_name")) {
-                PreparedStatement pstmt = connection.prepareStatement(
-                        "UPDATE customer_record SET last_name = ? WHERE customer_id = ?");
-                pstmt.setString(1, text);
-                pstmt.setInt(2, id);
-                pstmt.executeUpdate();
-            }
-            else if (field.equals("email")) {
-                PreparedStatement pstmt = connection.prepareStatement(
-                        "UPDATE customer_record SET email = ? WHERE customer_id = ?");
-                pstmt.setString(1, text);
-                pstmt.setInt(2, id);
-                pstmt.executeUpdate();
-            }
-            else if (field.equals("registration_date")) {
-                PreparedStatement pstmt = connection.prepareStatement(
-                        "UPDATE customer_record SET registration_date = ? WHERE customer_id = ?");
-                pstmt.setString(1, text);
-                pstmt.setInt(2, id);
-                pstmt.executeUpdate();
-            }
-            else if(field.equals("platform")) {
-                PreparedStatement pstmt = connection.prepareStatement(
-                        "UPDATE customer_record SET preferred_platform = ? WHERE customer_id = ?");
-                pstmt.setString(1, text);
-                pstmt.setInt(2, id);
-                pstmt.executeUpdate();
-            }
-            else if(field.equals("country")) {
-                PreparedStatement pstmt = connection.prepareStatement(
-                        "UPDATE customer_record SET country = ? WHERE customer_id = ?");
-                pstmt.setString(1, text);
-                pstmt.setInt(2, id);
-                pstmt.executeUpdate();
-            }
-
-
-
-
-            connection.close();
+            pstmt.setString(1, text);
+            pstmt.setInt(2, id);
+            pstmt.executeUpdate();
 
         } catch(SQLException e) {
             e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Database Error", "Failed to update customer: " + e.getMessage());
         }
     }
 
@@ -398,45 +292,30 @@ public class customerTable {
         TableColumn<Person, Void> actionCol = new TableColumn<>("Actions");
         actionCol.setPrefWidth(180);
 
-        actionCol.setCellFactory(column -> new TableCell<Person, Void>() {
+        actionCol.setCellFactory(column -> new TableCell<>() {
             private final Button viewButton = new Button("👁️ View");
             private final Button deleteButton = new Button("🗑️");
             private final HBox buttons = new HBox(5, viewButton, deleteButton);
 
             {
-
-                viewButton.setStyle(
-                        "-fx-background-color: #3498db; " +
-                                "-fx-text-fill: white; " +
-                                "-fx-cursor: hand;"
-                );
-
-
-                deleteButton.setStyle(
-                        "-fx-background-color: #e74c3c; " +
-                                "-fx-text-fill: white; " +
-                                "-fx-cursor: hand;"
-                );
-
+                viewButton.setStyle("-fx-background-color: #3498db; -fx-text-fill: white; -fx-cursor: hand;");
+                deleteButton.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-cursor: hand;");
+                buttons.setAlignment(Pos.CENTER);
 
                 viewButton.setOnAction(event -> {
                     Person person = getTableView().getItems().get(getIndex());
                     showCustomerDetails(person);
                 });
 
-
                 deleteButton.setOnAction(event -> {
                     Person person = getTableView().getItems().get(getIndex());
                     handleDeleteCustomer(person);
                 });
-
-                buttons.setAlignment(Pos.CENTER);
             }
 
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
-
                 if (empty) {
                     setGraphic(null);
                 } else {
@@ -446,11 +325,9 @@ public class customerTable {
         });
 
         customerTable.getColumns().add(actionCol);
-
     }
 
     private void handleDeleteCustomer(Person person) {
-
         Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
         confirmAlert.setTitle("Confirm Deletion");
         confirmAlert.setHeaderText("Delete Customer?");
@@ -466,78 +343,56 @@ public class customerTable {
 
         if (result.isPresent() && result.get() == ButtonType.OK) {
             deleteFromDatabase(person.getId());
-            loadCustomers();
+            loadCustomers(); // Refresh table
         }
     }
 
     private void deleteFromDatabase(int customerId) {
-        try {
-            Connection connection = DriverManager.getConnection(
-                    "jdbc:mysql://127.0.0.1:3306/gamemanagementdatabase",
-                    "root", "thunder1515");
+        try (Connection connection = DriverManager.getConnection(
+                "jdbc:mysql://127.0.0.1:3307/gamemanagementdatabase",
+                "root", "")) {
 
             // Check if customer has transactions
-            PreparedStatement checkTx = connection.prepareStatement(
-                    "SELECT COUNT(*) FROM transaction_log WHERE customer_id = ?");
-            checkTx.setInt(1, customerId);
-            ResultSet rs = checkTx.executeQuery();
-
-            if (rs.next() && rs.getInt(1) > 0) {
-                Alert alert = new Alert(Alert.AlertType.WARNING);
-                alert.setTitle("Cannot Delete");
-                alert.setHeaderText(null);
-                alert.setContentText(
-                        "This customer has purchase history.\n" +
-                                "Cannot delete customers with transactions.");
-                alert.showAndWait();
-                connection.close();
-                return;
+            try (PreparedStatement checkTx = connection.prepareStatement(
+                    "SELECT COUNT(*) FROM transaction_log WHERE customer_id = ?")) {
+                checkTx.setInt(1, customerId);
+                try (ResultSet rs = checkTx.executeQuery()) {
+                    if (rs.next() && rs.getInt(1) > 0) {
+                        showAlert(Alert.AlertType.WARNING, "Cannot Delete",
+                                "This customer has purchase history.\n" +
+                                        "Cannot delete customers with transactions.");
+                        return;
+                    }
+                }
             }
 
+            // If no transactions, proceed with deletion
+            try (PreparedStatement deleteStmt = connection.prepareStatement(
+                    "DELETE FROM customer_record WHERE customer_id = ?")) {
+                deleteStmt.setInt(1, customerId);
+                int rowsAffected = deleteStmt.executeUpdate();
 
-            PreparedStatement deleteStmt = connection.prepareStatement(
-                    "DELETE FROM customer_record WHERE customer_id = ?");
-            deleteStmt.setInt(1, customerId);
-
-            int rowsAffected = deleteStmt.executeUpdate();
-
-            if (rowsAffected > 0) {
-                Alert success = new Alert(Alert.AlertType.INFORMATION);
-                success.setTitle("Success");
-                success.setHeaderText(null);
-                success.setContentText("Customer deleted successfully!");
-                success.showAndWait();
-
-
+                if (rowsAffected > 0) {
+                    showAlert(Alert.AlertType.INFORMATION, "Success", "Customer deleted successfully!");
+                }
             }
-
-
-            connection.close();
 
         } catch (SQLException e) {
             e.printStackTrace();
-            Alert error = new Alert(Alert.AlertType.ERROR);
-            error.setTitle("Error");
-            error.setHeaderText(null);
-            error.setContentText("Failed to delete customer: " + e.getMessage());
-            error.showAndWait();
+            showAlert(Alert.AlertType.ERROR, "Error", "Failed to delete customer: " + e.getMessage());
         }
     }
 
     private void loadCustomers() {
-        try {
-            Connection connection = DriverManager.getConnection(
-                    "jdbc:mysql://127.0.0.1:3306/gamemanagementdatabase",
-                    "root", "thunder1515");
-
-            PreparedStatement pstmt = connection.prepareStatement(
-                    "SELECT * FROM customer_record ORDER BY customer_id");
-            ResultSet rs = pstmt.executeQuery();
-
-            ObservableList<Person> customerList = FXCollections.observableArrayList();
+        ObservableList<Person> customerList = FXCollections.observableArrayList();
+        try (Connection connection = DriverManager.getConnection(
+                "jdbc:mysql://127.0.0.1:3307/gamemanagementdatabase",
+                "root", "");
+             PreparedStatement pstmt = connection.prepareStatement("SELECT * FROM customer_record ORDER BY customer_id");
+             ResultSet rs = pstmt.executeQuery()) {
 
             while (rs.next()) {
-                Person person = new Person(
+                customerList.add(new Person(
                         rs.getInt("customer_id"),
                         rs.getString("first_name"),
                         rs.getString("last_name"),
@@ -547,13 +402,9 @@ public class customerTable {
                         rs.getString("preferred_platform"),
                         rs.getDouble("total_spent"),
                         rs.getInt("games_owned")
-                );
-                customerList.add(person);
+                ));
             }
-
             customerTable.setItems(customerList);
-
-            connection.close();
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -580,25 +431,18 @@ public class customerTable {
 
         customerInfo.add(new Label("ID:"), 0, 0);
         customerInfo.add(new Label(String.valueOf(person.getId())), 1, 0);
-
         customerInfo.add(new Label("Name:"), 0, 1);
         customerInfo.add(new Label(person.getFirstName() + " " + person.getLastName()), 1, 1);
-
         customerInfo.add(new Label("Email:"), 0, 2);
         customerInfo.add(new Label(person.getEmail()), 1, 2);
-
         customerInfo.add(new Label("Registration Date:"), 0, 3);
         customerInfo.add(new Label(person.getDate()), 1, 3);
-
         customerInfo.add(new Label("Country:"), 0, 4);
         customerInfo.add(new Label(person.getCountry()), 1, 4);
-
         customerInfo.add(new Label("Preferred Platform:"), 0, 5);
-        customerInfo.add(new Label(person.getPlatform()), 1, 5);
-
+        customerInfo.add(new Label(person.getPlatform() != null ? person.getPlatform() : "N/A"), 1, 5);
         customerInfo.add(new Label("Total Spent:"), 0, 6);
         customerInfo.add(new Label(String.format("$%.2f", person.getSpent())), 1, 6);
-
         customerInfo.add(new Label("Games Owned:"), 0, 7);
         customerInfo.add(new Label(String.valueOf(person.getGames())), 1, 7);
 
@@ -627,7 +471,6 @@ public class customerTable {
 
         gamesTable.getColumns().addAll(titleCol, priceCol, dateCol, paymentCol);
 
-        // Load games
         ObservableList<GamePurchase> games = getCustomerGamesDetailed(person.getId());
         gamesTable.setItems(games);
 
@@ -641,7 +484,6 @@ public class customerTable {
 
         dialog.getDialogPane().setContent(content);
         dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
-
         dialog.showAndWait();
     }
 
@@ -667,48 +509,38 @@ public class customerTable {
 
     private ObservableList<GamePurchase> getCustomerGamesDetailed(int customerId) {
         ObservableList<GamePurchase> games = FXCollections.observableArrayList();
+        try (Connection conn = DriverManager.getConnection(
+                "jdbc:mysql://127.0.0.1:3307/gamemanagementdatabase",
+                "root", "");
+             PreparedStatement pstmt = conn.prepareStatement(
+                     "SELECT gr.title, tl.amount, DATE_FORMAT(tl.purchase_date, '%Y-%m-%d') as purchase_date_formatted, tl.payment_method " +
+                             "FROM game_record gr " +
+                             "JOIN transaction_log tl ON gr.game_id = tl.game_id " +
+                             "WHERE tl.customer_id = ? " +
+                             "ORDER BY tl.purchase_date DESC")) {
 
-        try {
-            Connection conn = DriverManager.getConnection(
-                    "jdbc:mysql://127.0.0.1:3306/gamemanagementdatabase",
-                    "root", "thunder1515");
-
-            PreparedStatement pstmt = conn.prepareStatement(
-                    "SELECT gr.title, tl.amount, tl.purchase_date, tl.payment_method " +
-                            "FROM game_record gr " +
-                            "JOIN transaction_log tl ON gr.game_id = tl.game_id " +
-                            "WHERE tl.customer_id = ? " +
-                            "ORDER BY tl.purchase_date DESC");
             pstmt.setInt(1, customerId);
-            ResultSet rs = pstmt.executeQuery();
-
-            while (rs.next()) {
-                games.add(new GamePurchase(
-                        rs.getString("title"),
-                        rs.getDouble("amount"),
-                        rs.getString("purchase_date"),
-                        rs.getString("payment_method")
-                ));
+            try (ResultSet rs = pstmt.executeQuery()) {
+                while (rs.next()) {
+                    games.add(new GamePurchase(
+                            rs.getString("title"),
+                            rs.getDouble("amount"),
+                            rs.getString("purchase_date_formatted"),
+                            rs.getString("payment_method")
+                    ));
+                }
             }
-
-            conn.close();
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return games;
     }
 
     public boolean checkIfValidName(String text) {
-        if(text.isEmpty()) {
+        if(text == null || text.isEmpty()) {
             return false;
         }
-        else if(isInteger(text)) {
-            return false;
-        }
-
-       return true;
+        return !isInteger(text);
     }
 
     public static boolean isInteger(String str) {
@@ -723,14 +555,20 @@ public class customerTable {
         }
     }
 
+    private void showAlert(Alert.AlertType type, String title, String message) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
     public void back(ActionEvent event) throws IOException {
-        System.out.println("works");
+        System.out.println("Returning to Customer Menu");
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("customerView.fxml")));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
     }
-
-
 }

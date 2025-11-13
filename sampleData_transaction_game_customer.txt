@@ -1,13 +1,12 @@
 -- ============================================
 -- GAME MANAGEMENT DATABASE - TESTING SCRIPT
--- Run this to populate sample data for testing
+-- UPDATED WITH status AND password_hash
 -- ============================================
 
 -- ============================================
 -- STEP 1: RESET EVERYTHING (Clean Slate)
 -- ============================================
 
--- Drop data in correct order (respect foreign keys)
 SET FOREIGN_KEY_CHECKS = 0;
 
 TRUNCATE TABLE transaction_log;
@@ -40,151 +39,151 @@ INSERT INTO game_record (game_id, title, genre, release_date, platform, price, t
 (12, 'Fantasy Quest Online', 'MMORPG', '2026-03-15', 'PC', 59.99, 0, 'under_dev', 0.0, 0, 2);
 
 -- ============================================
--- STEP 3: INSERT CUSTOMERS
+-- STEP 3: INSERT CUSTOMERS WITH PASSWORDS
 -- ============================================
+-- Password for all test accounts: "password123"
+-- Hash: ef92b778bafe771e89245b89ecbc08a44a4e166c06659911881f383d4473e94f
 
-INSERT INTO customer_record (customer_id, last_name, first_name, email, registration_date, country, preferred_platform, total_spent, games_owned) VALUES
-(1, 'Smith', 'Amber', 'amber.smith@email.com', '2024-02-01', 'United States', 'PC', 0, 0),
-(2, 'Garcia', 'Maria', 'maria.garcia@email.com', '2025-01-28', 'Spain', 'PlayStation', 0, 0),
-(3, 'Johnson', 'Liam', 'liam.johnson@email.com', '2024-03-10', 'Canada', 'Xbox', 0, 0),
-(4, 'Kim', 'Min-jun', 'minjun.kim@email.com', '2024-03-25', 'South Korea', 'PC', 0, 0),
-(5, 'Silva', 'Pedro', 'pedro.silva@email.com', '2024-04-05', 'Brazil', 'Xbox', 0, 0),
-(6, 'Johnson', 'Emma', 'emma.johnson@email.com', '2024-05-12', 'United Kingdom', 'PC', 0, 0),
-(7, 'Lopez', 'Carlos', 'carlos.lopez@email.com', '2024-06-18', 'Mexico', 'PlayStation', 0, 0),
-(8, 'Wang', 'Wei', 'wei.wang@email.com', '2024-07-22', 'China', 'Mobile', 0, 0),
-(9, 'Müller', 'Anna', 'anna.muller@email.com', '2024-08-30', 'Germany', 'PC', 0, 0),
-(10, 'Patel', 'Raj', 'raj.patel@email.com', '2024-09-15', 'India', 'Mobile', 0, 0);
+INSERT INTO customer_record (customer_id, last_name, first_name, email, password, registration_date, country, preferred_platform, total_spent, games_owned) VALUES
+(1, 'Smith', 'Amber', 'amber.smith@email.com', '1234', '2024-02-01', 'United States', 'PC', 0, 0),
+(2, 'Garcia', 'Maria', 'maria.garcia@email.com', '1234', '2025-01-28', 'Spain', 'PlayStation', 0, 0),
+(3, 'Johnson', 'Liam', 'liam.johnson@email.com', '1234', '2024-03-10', 'Canada', 'Xbox', 0, 0),
+(4, 'Kim', 'Min-jun', 'minjun.kim@email.com', '1234', '2024-03-25', 'South Korea', 'PC', 0, 0),
+(5, 'Silva', 'Pedro', 'pedro.silva@email.com', '1234', '2024-04-05', 'Brazil', 'Xbox', 0, 0),
+(6, 'Johnson', 'Emma', 'emma.johnson@email.com', '1234', '2024-05-12', 'United Kingdom', 'PC', 0, 0),
+(7, 'Lopez', 'Carlos', 'carlos.lopez@email.com', '1234', '2024-06-18', 'Mexico', 'PlayStation', 0, 0),
+(8, 'Wang', 'Wei', 'wei.wang@email.com', '1234', '2024-07-22', 'China', 'Mobile', 0, 0),
+(9, 'Müller', 'Anna', 'anna.muller@email.com', '1234', '2024-08-30', 'Germany', 'PC', 0, 0),
+(10, 'Patel', 'Raj', 'raj.patel@email.com', '1234', '2024-09-15', 'India', 'Mobile', 0, 0);
 
 -- ============================================
--- STEP 4: INSERT TRANSACTIONS (This updates totals!)
+-- STEP 4: INSERT TRANSACTIONS WITH STATUS
 -- ============================================
+-- status = 'Paid' (default) or 'Refunded' (Bea's part)
 
--- Customer 1 (Amber Smith) - 5 games, $249.95 total
-INSERT INTO transaction_log (customer_id, game_id, purchase_date, payment_method, amount) VALUES
-(1, 1, '2024-02-15', 'Credit Card', 59.99),
-(1, 3, '2024-03-20', 'Credit Card', 29.99),
-(1, 5, '2024-05-10', 'PayPal', 49.99),
-(1, 7, '2024-07-04', 'Credit Card', 9.99),
-(1, 4, '2024-09-12', 'Debit Card', 69.99);
+-- Customer 1 (Amber Smith) - 5 games, $219.95 total
+INSERT INTO transaction_log (customer_id, game_id, purchase_date, payment_method, amount, status) VALUES
+(1, 1, '2024-02-15 14:23:00', 'Credit Card', 59.99, 'Paid'),
+(1, 3, '2024-03-20 10:15:00', 'Credit Card', 29.99, 'Paid'),
+(1, 5, '2024-05-10 16:45:00', 'PayPal', 49.99, 'Paid'),
+(1, 7, '2024-07-04 09:30:00', 'Credit Card', 9.99, 'Paid'),
+(1, 4, '2024-09-12 18:20:00', 'Debit Card', 69.99, 'Paid');
 
--- Customer 2 (Maria Garcia) - 3 games, $119.97 total
-INSERT INTO transaction_log (customer_id, game_id, purchase_date, payment_method, amount) VALUES
-(2, 2, '2025-02-01', 'PayPal', 0.00),
-(2, 10, '2025-03-15', 'Credit Card', 54.99),
-(2, 4, '2025-05-20', 'Debit Card', 69.99);
+-- Customer 2 (Maria Garcia) - 3 games, $124.98 total
+INSERT INTO transaction_log (customer_id, game_id, purchase_date, payment_method, amount, status) VALUES
+(2, 2, '2025-02-01 12:00:00', 'PayPal', 0.00, 'Paid'),
+(2, 10, '2025-03-15 15:30:00', 'Credit Card', 54.99, 'Paid'),
+(2, 4, '2025-05-20 11:45:00', 'Debit Card', 69.99, 'Paid');
 
--- Customer 3 (Liam Johnson) - 2 games, $99.98 total
-INSERT INTO transaction_log (customer_id, game_id, purchase_date, payment_method, amount) VALUES
-(3, 5, '2024-04-10', 'Credit Card', 49.99),
-(3, 5, '2024-04-11', 'Credit Card', 49.99);
+-- Customer 3 (Liam Johnson) - 3 games, $124.97 total
+INSERT INTO transaction_log (customer_id, game_id, purchase_date, payment_method, amount, status) VALUES
+(3, 5, '2024-04-10 13:20:00', 'Credit Card', 49.99, 'Paid'),
+(3, 9, '2024-04-11 14:10:00', 'Credit Card', 44.99, 'Paid'),
+(3, 3, '2024-05-20 10:05:00', 'PayPal', 29.99, 'Paid');
 
--- Customer 4 (Min-jun Kim) - 10 games, $484.92 total
-INSERT INTO transaction_log (customer_id, game_id, purchase_date, payment_method, amount) VALUES
-(4, 1, '2024-04-01', 'Credit Card', 59.99),
-(4, 2, '2024-04-05', 'Credit Card', 0.00),
-(4, 3, '2024-05-10', 'PayPal', 29.99),
-(4, 4, '2024-05-15', 'Credit Card', 69.99),
-(4, 5, '2024-06-01', 'Credit Card', 49.99),
-(4, 6, '2024-06-20', 'PayPal', 39.99),
-(4, 7, '2024-07-10', 'Credit Card', 9.99),
-(4, 8, '2024-08-05', 'Credit Card', 0.00),
-(4, 9, '2024-09-01', 'Debit Card', 44.99),
-(4, 10, '2024-10-15', 'Credit Card', 54.99);
+-- Customer 4 (Min-jun Kim) - 10 games, $359.93 total (completionist!)
+INSERT INTO transaction_log (customer_id, game_id, purchase_date, payment_method, amount, status) VALUES
+(4, 1, '2024-04-01 08:00:00', 'Credit Card', 59.99, 'Paid'),
+(4, 2, '2024-04-05 09:15:00', 'Credit Card', 0.00, 'Paid'),
+(4, 3, '2024-05-10 17:30:00', 'PayPal', 29.99, 'Paid'),
+(4, 4, '2024-05-15 12:45:00', 'Credit Card', 69.99, 'Paid'),
+(4, 5, '2024-06-01 14:20:00', 'Credit Card', 49.99, 'Paid'),
+(4, 6, '2024-06-20 16:10:00', 'PayPal', 39.99, 'Paid'),
+(4, 7, '2024-07-10 11:25:00', 'Credit Card', 9.99, 'Paid'),
+(4, 8, '2024-08-05 15:50:00', 'Credit Card', 0.00, 'Paid'),
+(4, 9, '2024-09-01 13:35:00', 'Debit Card', 44.99, 'Paid'),
+(4, 10, '2024-10-15 10:40:00', 'Credit Card', 54.99, 'Paid');
 
--- Customer 5 (Pedro Silva) - 5 games, $383.99 total
-INSERT INTO transaction_log (customer_id, game_id, purchase_date, payment_method, amount) VALUES
-(5, 4, '2024-04-20', 'Credit Card', 69.99),
-(5, 6, '2024-05-15', 'PayPal', 39.99),
-(5, 9, '2024-06-30', 'Credit Card', 44.99),
-(5, 10, '2024-08-12', 'Debit Card', 54.99),
-(5, 1, '2024-10-05', 'Credit Card', 59.99);
+-- Customer 5 (Pedro Silva) - 5 games, $269.95 total
+INSERT INTO transaction_log (customer_id, game_id, purchase_date, payment_method, amount, status) VALUES
+(5, 4, '2024-04-20 09:30:00', 'Credit Card', 69.99, 'Paid'),
+(5, 6, '2024-05-15 14:15:00', 'PayPal', 39.99, 'Paid'),
+(5, 9, '2024-06-30 16:45:00', 'Credit Card', 44.99, 'Paid'),
+(5, 10, '2024-08-12 11:20:00', 'Debit Card', 54.99, 'Paid'),
+(5, 1, '2024-10-05 13:50:00', 'Credit Card', 59.99, 'Paid');
 
--- Customer 6 (Emma Johnson) - 13 games, $298.88 total (lots of free games!)
-INSERT INTO transaction_log (customer_id, game_id, purchase_date, payment_method, amount) VALUES
-(6, 2, '2024-05-20', 'PayPal', 0.00),
-(6, 8, '2024-05-21', 'PayPal', 0.00),
-(6, 7, '2024-06-01', 'Credit Card', 9.99),
-(6, 7, '2024-06-02', 'Credit Card', 9.99),
-(6, 7, '2024-06-03', 'Credit Card', 9.99),
-(6, 3, '2024-07-10', 'Debit Card', 29.99),
-(6, 3, '2024-07-11', 'Debit Card', 29.99),
-(6, 5, '2024-08-15', 'Credit Card', 49.99),
-(6, 5, '2024-08-16', 'Credit Card', 49.99),
-(6, 9, '2024-09-20', 'PayPal', 44.99),
-(6, 9, '2024-09-21', 'PayPal', 44.99),
-(6, 7, '2024-10-01', 'Credit Card', 9.99),
-(6, 7, '2024-10-02', 'Credit Card', 9.99);
+-- Customer 6 (Emma Johnson) - 7 games, $184.93 total
+INSERT INTO transaction_log (customer_id, game_id, purchase_date, payment_method, amount, status) VALUES
+(6, 2, '2024-05-20 10:00:00', 'PayPal', 0.00, 'Paid'),
+(6, 8, '2024-05-21 10:30:00', 'PayPal', 0.00, 'Paid'),
+(6, 7, '2024-06-01 15:20:00', 'Credit Card', 9.99, 'Paid'),
+(6, 3, '2024-07-10 12:40:00', 'Debit Card', 29.99, 'Paid'),
+(6, 5, '2024-08-15 14:55:00', 'Credit Card', 49.99, 'Paid'),
+(6, 9, '2024-09-20 16:10:00', 'PayPal', 44.99, 'Paid'),
+(6, 1, '2024-10-01 11:30:00', 'Credit Card', 59.99, 'Paid');
 
 -- Customer 7 (Carlos Lopez) - 0 games, $0.00 total (new customer, no purchases yet)
 -- No transactions
 
--- Customer 8 (Wei Wang) - 6 games, $249.96 total
-INSERT INTO transaction_log (customer_id, game_id, purchase_date, payment_method, amount) VALUES
-(8, 6, '2024-08-01', 'Gcash', 39.99),
-(8, 6, '2024-08-02', 'Gcash', 39.99),
-(8, 6, '2024-08-03', 'Gcash', 39.99),
-(8, 7, '2024-09-10', 'Gcash', 9.99),
-(8, 7, '2024-09-11', 'Gcash', 9.99),
-(8, 1, '2024-10-20', 'Credit Card', 59.99);
+-- Customer 8 (Wei Wang) - 4 games, $119.96 total
+INSERT INTO transaction_log (customer_id, game_id, purchase_date, payment_method, amount, status) VALUES
+(8, 6, '2024-08-01 13:20:00', 'Gcash', 39.99, 'Paid'),
+(8, 7, '2024-09-10 15:40:00', 'Gcash', 9.99, 'Paid'),
+(8, 1, '2024-10-20 10:25:00', 'Credit Card', 59.99, 'Paid'),
+(8, 3, '2024-11-05 14:50:00', 'Gcash', 9.99, 'Paid');
 
--- Customer 9 (Anna Müller) - 7 games, $379.94 total
-INSERT INTO transaction_log (customer_id, game_id, purchase_date, payment_method, amount) VALUES
-(9, 1, '2024-09-05', 'PayPal', 59.99),
-(9, 4, '2024-09-10', 'PayPal', 69.99),
-(9, 5, '2024-09-20', 'Credit Card', 49.99),
-(9, 9, '2024-10-01', 'PayPal', 44.99),
-(9, 10, '2024-10-15', 'Debit Card', 54.99),
-(9, 3, '2024-11-01', 'PayPal', 29.99),
-(9, 6, '2024-11-05', 'Credit Card', 39.99);
+-- Customer 9 (Anna Müller) - 7 games, $349.93 total
+INSERT INTO transaction_log (customer_id, game_id, purchase_date, payment_method, amount, status) VALUES
+(9, 1, '2024-09-05 09:15:00', 'PayPal', 59.99, 'Paid'),
+(9, 4, '2024-09-10 11:30:00', 'PayPal', 69.99, 'Paid'),
+(9, 5, '2024-09-20 13:45:00', 'Credit Card', 49.99, 'Paid'),
+(9, 9, '2024-10-01 15:20:00', 'PayPal', 44.99, 'Paid'),
+(9, 10, '2024-10-15 10:50:00', 'Debit Card', 54.99, 'Paid'),
+(9, 3, '2024-11-01 12:35:00', 'PayPal', 29.99, 'Paid'),
+(9, 6, '2024-11-05 14:10:00', 'Credit Card', 39.99, 'Paid');
 
--- Customer 10 (Raj Patel) - 3 games, $129.95 total
-INSERT INTO transaction_log (customer_id, game_id, purchase_date, payment_method, amount) VALUES
-(10, 7, '2024-10-01', 'Gcash', 9.99),
-(10, 8, '2024-10-10', 'Gcash', 0.00),
-(10, 1, '2024-11-01', 'Credit Card', 59.99);
+-- Customer 10 (Raj Patel) - 4 games, $69.98 total
+INSERT INTO transaction_log (customer_id, game_id, purchase_date, payment_method, amount, status) VALUES
+(10, 7, '2024-10-01 16:25:00', 'Gcash', 9.99, 'Paid'),
+(10, 8, '2024-10-10 11:40:00', 'Gcash', 0.00, 'Paid'),
+(10, 1, '2024-11-01 13:55:00', 'Credit Card', 59.99, 'Paid'),
+(10, 2, '2024-11-05 15:10:00', 'Gcash', 0.00, 'Paid');
 
 -- ============================================
--- STEP 5: UPDATE CUSTOMER TOTALS (Calculate from transactions)
+-- STEP 5: UPDATE CUSTOMER TOTALS
 -- ============================================
+-- Only count 'Paid' transactions
 
 UPDATE customer_record c
 SET 
     total_spent = (
         SELECT IFNULL(SUM(amount), 0) 
         FROM transaction_log 
-        WHERE customer_id = c.customer_id
+        WHERE customer_id = c.customer_id AND status = 'Paid'
     ),
     games_owned = (
         SELECT COUNT(*) 
         FROM transaction_log 
-        WHERE customer_id = c.customer_id
+        WHERE customer_id = c.customer_id AND status = 'Paid'
     );
 
 -- ============================================
--- STEP 6: UPDATE GAME TOTALS (Calculate from transactions)
+-- STEP 6: UPDATE GAME TOTALS
 -- ============================================
+-- Only count 'Paid' transactions
 
 UPDATE game_record g
 SET total_bought = (
     SELECT COUNT(*) 
     FROM transaction_log 
-    WHERE game_id = g.game_id
+    WHERE game_id = g.game_id AND status = 'Paid'
 );
 
 -- ============================================
 -- VERIFICATION QUERIES
 -- ============================================
 
--- Check customer totals match
+-- Check customer totals match (only Paid transactions)
 SELECT 
     c.customer_id,
     CONCAT(c.first_name, ' ', c.last_name) as customer_name,
     c.total_spent as recorded_total,
-    IFNULL(SUM(t.amount), 0) as calculated_total,
+    IFNULL(SUM(CASE WHEN t.status = 'Paid' THEN t.amount ELSE 0 END), 0) as calculated_total,
     c.games_owned as recorded_games,
-    COUNT(t.transaction_id) as calculated_games,
+    COUNT(CASE WHEN t.status = 'Paid' THEN 1 END) as calculated_games,
     CASE 
-        WHEN c.total_spent = IFNULL(SUM(t.amount), 0) THEN '✓ MATCH'
+        WHEN c.total_spent = IFNULL(SUM(CASE WHEN t.status = 'Paid' THEN t.amount ELSE 0 END), 0) 
+        THEN '✓ MATCH'
         ELSE '✗ MISMATCH'
     END as status
 FROM customer_record c
@@ -192,20 +191,40 @@ LEFT JOIN transaction_log t ON c.customer_id = t.customer_id
 GROUP BY c.customer_id
 ORDER BY c.customer_id;
 
--- Check game totals match
+-- Check game totals match (only Paid transactions)
 SELECT 
     g.game_id,
     g.title,
     g.total_bought as recorded_sales,
-    COUNT(t.transaction_id) as calculated_sales,
+    COUNT(CASE WHEN t.status = 'Paid' THEN 1 END) as calculated_sales,
     CASE 
-        WHEN g.total_bought = COUNT(t.transaction_id) THEN '✓ MATCH'
+        WHEN g.total_bought = COUNT(CASE WHEN t.status = 'Paid' THEN 1 END) 
+        THEN '✓ MATCH'
         ELSE '✗ MISMATCH'
     END as status
 FROM game_record g
 LEFT JOIN transaction_log t ON g.game_id = t.game_id
 GROUP BY g.game_id
 ORDER BY g.game_id;
+
+-- Check for duplicate purchases (should return 0 rows)
+SELECT 
+    customer_id,
+    game_id,
+    COUNT(*) as purchase_count,
+    '✗ DUPLICATE PURCHASE DETECTED!' as warning
+FROM transaction_log
+WHERE status = 'Paid'
+GROUP BY customer_id, game_id
+HAVING COUNT(*) > 1;
+
+-- Transaction status breakdown
+SELECT 
+    status,
+    COUNT(*) as transaction_count,
+    SUM(amount) as total_amount
+FROM transaction_log
+GROUP BY status;
 
 -- ============================================
 -- SUCCESS MESSAGE
@@ -216,4 +235,9 @@ SELECT
     (SELECT COUNT(*) FROM customer_record) as customers,
     (SELECT COUNT(*) FROM game_record) as games,
     (SELECT COUNT(*) FROM transaction_log) as transactions,
+    (SELECT COUNT(*) FROM transaction_log WHERE status = 'Paid') as paid_transactions,
+    (SELECT COUNT(*) FROM transaction_log WHERE status = 'Refunded') as refunded_transactions,
     (SELECT SUM(total_spent) FROM customer_record) as total_revenue;
+
+---
+

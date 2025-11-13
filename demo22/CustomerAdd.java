@@ -56,6 +56,12 @@ public class CustomerAdd {
      String country;
     public boolean canAddCustomer() {
         boolean isValid = true;
+        firstNameError.setVisible(false);
+        lastNameError.setVisible(false);
+        emailError.setVisible(false);
+        countryError.setVisible(false);
+        registerError.setVisible(false);
+
         if(firstNameField.getText().isEmpty()) {
             firstNameError.setText("First name must not be empty");
             firstNameError.setVisible(true);
@@ -63,32 +69,44 @@ public class CustomerAdd {
         }
         else if(isInteger(firstNameField.getText())) {
             firstNameError.setText("First name cannot be an integer");
+            firstNameError.setVisible(true); // Make sure to show
             isValid = false;
         }
         else {
             firstName = firstNameField.getText();
-
         }
+
         if(lastNameField.getText().isEmpty()) {
             lastNameError.setText("Last name must not be empty");
+            lastNameError.setVisible(true);
             isValid = false;
         }
         else if(isInteger(lastNameField.getText())) {
             lastNameError.setText("Last name cannot be an integer");
+            lastNameError.setVisible(true); // Make sure to show
             isValid = false;
         }
         else {
              lastName = lastNameField.getText();
         }
+
         if(emailField.getText().isEmpty()) {
             emailError.setText("Email must not be empty");
+            emailError.setVisible(true);
+            isValid = false;
+        }
+        else if (!emailField.getText().contains("@") || !emailField.getText().contains(".")) {
+            emailError.setText("Invalid email format");
+            emailError.setVisible(true);
             isValid = false;
         }
         else {
             email = emailField.getText();
         }
+
         if(registerField.getValue() == null) {
             registerError.setText("Register field must not be empty");
+            registerError.setVisible(true);
             isValid = false;
         }
         else {
@@ -97,39 +115,37 @@ public class CustomerAdd {
             day = registerField.getValue().getDayOfMonth();
             registerDate = year + "-" + month + "-" + day;
         }
+
         if(countryField.getText().isEmpty()) {
             countryError.setText("Country must not be empty");
+            countryError.setVisible(true);
             isValid = false;
-
         } else if (isInteger(countryField.getText())) {
             countryError.setText("Country cannot be an integer");
+            countryError.setVisible(true);
             isValid = false;
-
         } else {
             country = countryField.getText();
         }
-        platform = platformField.getText();
-
+        platform = platformField.getText(); // Optional field
 
         return isValid;
     }
 
     @FXML
     public  void addCustomerData() {
-        boolean canAdd = canAddCustomer();
-        if(!canAdd) {
-            return;
+        if (!canAddCustomer()) {
+            return; // Stop if validation fails
         }
 
-        System.out.println("TESTING");
+        String sql = "INSERT INTO customer_record(last_name, first_name, email, registration_date, country, preferred_platform) " +
+                    "VALUES(?,?,?,?,?,?)";
 
-        try {
-            Connection connection = DriverManager.getConnection(
-                    "jdbc:mysql://127.0.0.1:3306/gamemanagementdatabase",
-                    "root", "thunder1515");
+        try (Connection connection = DriverManager.getConnection(
+                "jdbc:mysql://127.0.0.1:3307/gamemanagementdatabase",
+                "root", "");
+             PreparedStatement insertCustomer = connection.prepareStatement(sql)) {
 
-            PreparedStatement insertCustomer = connection.prepareStatement("INSERT INTO customer_record(last_name, first_name, email, registration_date, country, preferred_platform) " +
-                    "VALUES(?,?,?,?,?,?)");
             insertCustomer.setString(1, lastName);
             insertCustomer.setString(2, firstName);
             insertCustomer.setString(3, email);
@@ -137,13 +153,23 @@ public class CustomerAdd {
             insertCustomer.setString(5, country);
             insertCustomer.setString(6, platform);
             insertCustomer.executeUpdate();
+            
             showSuccessAlert();
-
-
+            clearFields();
 
         } catch(SQLException e) {
             e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Database Error", "Failed to add customer: " + e.getMessage());
         }
+    }
+
+    private void clearFields() {
+        firstNameField.clear();
+        lastNameField.clear();
+        emailField.clear();
+        countryField.clear();
+        platformField.clear();
+        registerField.setValue(null);
     }
 
 
@@ -164,6 +190,14 @@ public class CustomerAdd {
         alert.setTitle("Success");
         alert.setHeaderText(null);
         alert.setContentText("Customer added successfully!");
+        alert.showAndWait();
+    }
+
+    private void showAlert(Alert.AlertType type, String title, String message) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
         alert.showAndWait();
     }
 
