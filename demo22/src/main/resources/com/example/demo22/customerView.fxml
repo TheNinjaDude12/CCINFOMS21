@@ -23,7 +23,7 @@
          <font>
             <Font name="Berlin Sans FB" size="32.0" />
          </font></Button>
-      <Button layoutX="313.0" layoutY="302.0" mnemonicParsing="false" onAction="#addCustomer" prefHeight="127.0" prefWidth="356.0" style="-fx-background-color: green;" text="Add Customer">
+      <Button layoutX="161.0" layoutY="302.0" mnemonicParsing="false" onAction="#addCustomer" prefHeight="127.0" prefWidth="356.0" style="-fx-background-color: green;" text="Add Customer">
          <font>
             <Font name="Berlin Sans FB" size="40.0" />
          </font></Button>
@@ -35,5 +35,10 @@
          <font>
             <Font size="44.0" />
          </font></Button>
+      <Button layoutX="554.0" layoutY="302.0" mnemonicParsing="false" onAction="#switchToBuyView" prefHeight="127.0" prefWidth="356.0" style="-fx-background-color: yellow;" text="Buy Game">
+         <font>
+            <Font name="Berlin Sans FB" size="40.0" />
+         </font>
+      </Button>
    </children>
 </AnchorPane>
