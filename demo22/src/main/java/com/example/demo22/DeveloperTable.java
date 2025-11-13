@@ -3,7 +3,6 @@ package com.example.demo22;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -144,8 +143,8 @@ public class DeveloperTable {
     public void alterDeveloperData(String text, int id, String field) {
         String sql = String.format("UPDATE developer_record SET %s = ? WHERE developer_id = ?", field);
         try (Connection connection = DriverManager.getConnection(
-                "jdbc:mysql://127.0.0.1:3307/gamemanagementdatabase",
-                "root", "");
+                "jdbc:mysql://127.0.0.1:3306/gamemanagementdatabase",
+                "root", "thunder1515");
              PreparedStatement pstmt = connection.prepareStatement(sql)) {
 
             pstmt.setString(1, text);
@@ -219,8 +218,8 @@ public class DeveloperTable {
 
     private void deleteFromDatabase(int developerId) {
         try (Connection connection = DriverManager.getConnection(
-                "jdbc:mysql://127.0.0.1:3307/gamemanagementdatabase",
-                "root", "")) {
+                "jdbc:mysql://127.0.0.1:3306/gamemanagementdatabase",
+                "root", "thunder1515")) {
 
             // Check if developer has associated games
             try (PreparedStatement checkGames = connection.prepareStatement(
@@ -256,8 +255,8 @@ public class DeveloperTable {
     private void loadDevelopers() {
         ObservableList<Developer> devList = FXCollections.observableArrayList();
         try (Connection connection = DriverManager.getConnection(
-                "jdbc:mysql://127.0.0.1:3307/gamemanagementdatabase",
-                "root", "");
+                "jdbc:mysql://127.0.0.1:3306/gamemanagementdatabase",
+                "root", "thunder1515");
              PreparedStatement pstmt = connection.prepareStatement("SELECT * FROM developer_record ORDER BY developer_id");
              ResultSet rs = pstmt.executeQuery()) {
 
@@ -364,8 +363,8 @@ public class DeveloperTable {
     private ObservableList<GameRecord> getDeveloperGames(int developerId) {
         ObservableList<GameRecord> games = FXCollections.observableArrayList();
         try (Connection conn = DriverManager.getConnection(
-                "jdbc:mysql://127.0.0.1:3307/gamemanagementdatabase",
-                "root", "");
+                "jdbc:mysql://127.0.0.1:3306/gamemanagementdatabase",
+                "root", "thunder1515");
              PreparedStatement pstmt = conn.prepareStatement(
                      "SELECT title, price, status FROM game_record WHERE developer_id = ?")) {
 

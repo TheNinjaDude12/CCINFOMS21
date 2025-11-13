@@ -93,8 +93,8 @@ public class DeveloperAdd {
         String sql = "INSERT INTO developer_record(name, country, email, website) VALUES(?,?,?,?)";
 
         try (Connection connection = DriverManager.getConnection(
-                "jdbc:mysql://127.0.0.1:3307/gamemanagementdatabase",
-                "root", "");
+                "jdbc:mysql://127.0.0.1:3306/gamemanagementdatabase",
+                "root", "thunder1515");
              PreparedStatement insertDeveloper = connection.prepareStatement(sql)) {
 
             insertDeveloper.setString(1, name);
