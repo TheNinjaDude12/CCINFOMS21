@@ -15,7 +15,7 @@
          <font>
             <Font name="Dubai Medium" size="26.0" />
          </font></Button>
-      <Button layoutX="27.0" layoutY="391.0" mnemonicParsing="false" prefHeight="49.0" prefWidth="174.0" text="Back" />
+      <Button layoutX="27.0" layoutY="391.0" mnemonicParsing="false" onAction="#back" prefHeight="49.0" prefWidth="174.0" text="Back" />
       <TextField fx:id="emailField" layoutX="237.0" layoutY="22.0" prefHeight="43.0" prefWidth="198.0" />
       <Text fill="#ffa007" layoutX="136.0" layoutY="53.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Email">
          <font>

@@ -274,12 +274,21 @@ public class userRegister {
             return false;
         }
     }
+
     private void showSuccessAlert() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Success");
         alert.setHeaderText(null);
         alert.setContentText("Customer added successfully!");
         alert.showAndWait();
+    }
+    public void back (ActionEvent event) throws IOException {
+        System.out.println("works");
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("userView.fxml")));
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
     }
 
 

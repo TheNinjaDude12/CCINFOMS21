@@ -18,7 +18,7 @@ import java.sql.SQLException;
 import java.util.Objects;
 
 public class UserLogIn {
-
+    public static int user_id;
     @FXML
     private TextField userTextField;
     @FXML
@@ -81,6 +81,7 @@ public class UserLogIn {
                             Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("userMenuOptions.fxml")));
                             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                             Scene scene = new Scene(root);
+                            user_id = resultSet.getInt("customer_id");
                             stage.setScene(scene);
                             stage.show();
 
