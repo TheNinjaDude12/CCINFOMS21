@@ -20,13 +20,31 @@ public class UserMenuOptions {
         stage.setScene(scene);
         stage.show();
     }
-    public void logout (ActionEvent event) throws IOException {
+    public void switchToStore(ActionEvent event) throws IOException {
         System.out.println("works");
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("userView.fxml")));
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("userStore.fxml")));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
+    }
+    public void logout(ActionEvent event) {
+
+        UserLogIn.user_id = -1;
+
+        try {
+
+            Parent root = FXMLLoader.load(Objects.requireNonNull(
+                    getClass().getResource("userLogin.fxml")));
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }
