@@ -268,4 +268,89 @@ public class GenerateCustomerReport {
         stage.show();
     }
 
+    public void exportReport() {
+        // Check if there's data to export
+        if (reportTable.getItems().isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "No Data",
+                    "Please generate a report first before exporting.");
+            return;
+        }
+
+        // Create file chooser
+        javafx.stage.FileChooser fileChooser = new javafx.stage.FileChooser();
+        fileChooser.setTitle("Save Customer Engagement Report");
+
+        // Set initial filename based on filter
+        String filename;
+        if (yearRadio.isSelected() && !monthRadio.isSelected()) {
+            filename = "CustomerReport_Year" + year + ".txt";
+        } else {
+            filename = "CustomerReport_Year" + year + "_Month" + month + ".txt";
+        }
+        fileChooser.setInitialFileName(filename);
+
+        // Set file extension filter
+        javafx.stage.FileChooser.ExtensionFilter txtFilter =
+                new javafx.stage.FileChooser.ExtensionFilter("Text Files (*.txt)", "*.txt");
+        fileChooser.getExtensionFilters().add(txtFilter);
+
+        // Show save dialog
+        java.io.File file = fileChooser.showSaveDialog(reportTable.getScene().getWindow());
+
+        if (file != null) {
+            try (java.io.PrintWriter writer = new java.io.PrintWriter(file)) {
+                // Write header
+                writer.println("CUSTOMER ENGAGEMENT REPORT");
+                writer.println("=".repeat(80));
+
+                if (yearRadio.isSelected() && !monthRadio.isSelected()) {
+                    writer.println("Period: Year " + year);
+                } else {
+                    writer.println("Period: Year " + year + ", Month " + month);
+                }
+
+                writer.println("Generated: " + java.time.LocalDateTime.now().format(
+                        java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+                writer.println("Total Customers: " + reportTable.getItems().size());
+                writer.println("=".repeat(80));
+                writer.println();
+
+                // Write column headers
+                writer.printf("%-15s %-25s %-30s %-15s %-15s%n",
+                        "Customer ID", "Name", "Email", "Purchases", "Total Spent");
+                writer.println("-".repeat(80));
+
+                // Write data rows
+                double grandTotal = 0;
+                int totalPurchases = 0;
+
+                for (CustomerEngagement customer : reportTable.getItems()) {
+                    writer.printf("%-15d %-25s %-30s %-15d $%-14.2f%n",
+                            customer.getCustomerId(),
+                            customer.getCustomerName(),
+                            customer.getEmail(),
+                            customer.getTotalPurchases(),
+                            customer.getTotalSpent());
+
+                    grandTotal += customer.getTotalSpent();
+                    totalPurchases += customer.getTotalPurchases();
+                }
+
+                // Write summary
+                writer.println("-".repeat(80));
+                writer.printf("%-70s %-15d $%-14.2f%n",
+                        "TOTALS:", totalPurchases, grandTotal);
+                writer.println("=".repeat(80));
+
+                showAlert(Alert.AlertType.INFORMATION, "Export Successful",
+                        "Report exported to:\n" + file.getAbsolutePath());
+
+            } catch (java.io.IOException e) {
+                e.printStackTrace();
+                showAlert(Alert.AlertType.ERROR, "Export Failed",
+                        "Failed to export report: " + e.getMessage());
+            }
+        }
+    }
+
 }

@@ -33,13 +33,15 @@ public class UserLibrary {
     private Text welcomeText;
     @FXML
     private TableView<Game> gamesTable;
-    public static class Game {
+    @FXML
+    public TextField filterText;
+    public class Game {
         private String title;
 
         Game(String title) {
             this.title = title;
         }
-        public String getTitle() {
+        public  String getTitle() {
             return title;
         }
         public void setTitle(String title) {
@@ -126,6 +128,28 @@ public class UserLibrary {
             }
 
         });
+
+        FilteredList<Game> filteredData = new FilteredList<>(games, b -> true);
+         filterText.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredData.setPredicate(game -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+                String searchKeyword = newValue.toLowerCase();
+                if(game.getTitle().toLowerCase().indexOf(searchKeyword) > -1) {
+                    return true;
+                }
+
+                return false;
+            });
+
+
+
+        });
+        SortedList<UserLibrary.Game> sortedData = new SortedList<>(filteredData);
+        sortedData.comparatorProperty().bind(gamesTable.comparatorProperty());
+        gamesTable.setItems(sortedData);
+
 
     }
 

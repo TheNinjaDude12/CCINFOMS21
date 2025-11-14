@@ -164,6 +164,12 @@ public class customerTable {
                   if(Person.getLastName().toLowerCase().indexOf(searchKeyword) > -1) {
                       return true;
                   }
+                  else if(Person.getFirstName().toLowerCase().indexOf(searchKeyword) > -1) {
+                        return true;
+                  }
+                  else if(Person.getEmail().toLowerCase().indexOf(searchKeyword) > -1) {
+                      return true;
+                  }
                   return false;
               });
 
