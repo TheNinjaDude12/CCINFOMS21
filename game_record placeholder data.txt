@@ -1,0 +1,13 @@
+INSERT INTO game_record(title, genre, release_date, platform, price, total_bought, status, review_average, reviews, publisher_id)
+VALUES
+("Persona 3 Reload", "Role-Playing Game", "2024-02-02", "Console", 2399.00, 200, 'Released', 5.0, 100, 1),
+("Metaphor: reFantazio", "Role-Playing Game", "2024-10-11", "Console", 2895.00, 200, 'Released', 4.5, 100, 1),
+("Tekken 8", "Fighting Game", "2024-01-26", "Console", 2499.00, 300, 'Released', 3.0, 50, 2),
+("Hearts of Iron IV", "Strategy Game", "2016-06-06", "PC", 1999.00, 150, 'Released', 4.5, 200, 3),
+("Grand Theft Auto VI", "Action-Adventure", "2026-05-26", "Console", 0, 0, 'Under Development', 0, 0, 4),
+("Animal Crossing: New Horizons", "Social Simulation", "2020-03-20", 'Switch', 2250.00, 300, 'Released', 4, 150, 5),
+("Arknights: Endfield", "Action Role-Playing Game", null, 'Mobile', 0, 0, 'Beta', 0, 0, 6),
+("Crusader Kings III", "Strategy Game", "2020-09-01", 'PC', 1999.00, 350, 'Released', 4.5, 200, 3),
+("Limbus Company", "Turn-based RPG", "2023-02-26", 'Mobile', 0, 100, 'Released', 4, 50, 7),
+("Hollow Knight", "Metroidvania", "2017-02-24", 'PC', 485.00, 200, 'Released', 5.0, 150, 8)
+;

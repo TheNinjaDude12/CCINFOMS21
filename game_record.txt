@@ -1,13 +1,13 @@
 CREATE TABLE game_record(
-	`game_id` int NOT NULL PRIMARY KEY,
+	`game_id` int NOT NULL PRIMARY KEY AUTO_INCREMENT,
 	`title` varchar(50) NOT NULL,
-	`genre` varchar(20),
+	`genre` varchar(50),
 	`release_date` DATE,
-	`platform` varchar(20),
+	`platform` ENUM('Console', 'PC', 'Mobile', 'Switch'),
 	`price` float DEFAULT 0.0,
 	`total_bought` int DEFAULT 0,
-	`status` varchar(10),
+	`status` ENUM('Beta', 'Under Development', 'Released'),
 	`review_average` float DEFAULT 0,
-	`reviews` varchar(200),
+	`reviews` int DEFAULT 0,
 	`publisher_id` int NOT NULL
 );
