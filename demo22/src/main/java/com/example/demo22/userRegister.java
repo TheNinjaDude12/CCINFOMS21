@@ -153,6 +153,8 @@ public class userRegister {
 
         } else {
             country = countryField.getText();
+            String firstChar = country.substring(0,1).toUpperCase();
+            country = firstChar + country.substring(1).toLowerCase();
         }
         platform = platformField.getText();
 
