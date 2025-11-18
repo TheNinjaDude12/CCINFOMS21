@@ -3,7 +3,7 @@ CREATE TABLE game_record(
 	`title` varchar(50) NOT NULL,
 	`genre` varchar(50),
 	`release_date` DATE,
-	`platform` ENUM('Console', 'PC', 'Mobile', 'Switch'),
+	`platform` ENUM('Console', 'PC', 'Mobile', 'Switch', 'VR'),
 	`price` float DEFAULT 0.0,
 	`total_bought` int DEFAULT 0,
 	`status` ENUM('Beta', 'Under Development', 'Released'),
