@@ -8,5 +8,5 @@ CREATE TABLE customer_record(
     preferred_platform VARCHAR(200) DEFAULT 'None',
     total_spent DECIMAL(10,2) DEFAULT 0.00,
     games_owned INT DEFAULT 0,
-    password VARCHAR(100)
+    password VARCHAR(45)
 );
