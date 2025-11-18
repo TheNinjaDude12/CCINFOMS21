@@ -23,7 +23,12 @@
          <font>
             <Font name="Century Gothic" size="24.0" />
          </font></Button>
-      <Button layoutX="238.0" layoutY="385.0" mnemonicParsing="false" prefHeight="100.0" prefWidth="256.0" text="Button" />
+
+      <Button layoutX="596.0" layoutY="385.0" mnemonicParsing="false" onAction="#switchGameReview" prefHeight="85.0" prefWidth="256.0" style="-fx-background-color: #CE7E5A;" text="Game Review" textOverrun="WORD_ELLIPSIS">
+         <font>
+            <Font size="24.0" />
+         </font></Button>
+      <Button layoutX="238.0" layoutY="385.0" mnemonicParsing="false" onAction="#switchToPubView" prefHeight="100.0" prefWidth="256.0" text="Publisher Record" />
       <Button layoutX="238.0" layoutY="268.0" mnemonicParsing="false" onAction="#switchToDeveloperView" prefHeight="92.0" prefWidth="256.0" text="Developer Record" />
       <Button layoutX="235.0" layoutY="516.0" mnemonicParsing="false" prefHeight="92.0" prefWidth="262.0" text="Button" />
    </children>
