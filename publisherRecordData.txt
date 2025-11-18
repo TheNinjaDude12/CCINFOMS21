@@ -1,8 +1,15 @@
-INSERT INTO publisher_record (publisher_id, name, country, established_date, website, contact_email, company_size, specialization, is_active, total_games_published, revenue_share_percentage, publisher_budget_range)
-VALUE
-(1, 'Solarbyte Studios', 'United States', '2010-03-15', 'https://www.solarbyte.com', 'contact@solarbyte.com', 320, 'PC', TRUE, 0, 24.50, 6.3),
-(2, 'BlueNova Interactive', 'Japan', '2014-07-22', 'https://www.bluenova.jp', 'info@bluenova.jp', 210, 'Mobile', TRUE, 0, 30.00, 2.8),
-(3, 'IronPulse Games', 'Canada', '2006-01-10', 'https://www.ironpulse.ca', 'support@ironpulse.ca', 980, 'PlayStation', TRUE, 0, 22.25, 9.7),
-(4, 'Stormveil Entertainment', 'Germany', '1998-06-05', 'https://www.stormveil.de', 'hello@stormveil.de', 720, 'PC', TRUE, 0, 19.80, 14.1),
-(5, 'DreamArcade Studio', 'South Korea', '2011-10-01', 'https://www.dreamarcade.kr', 'contact@dreamarcade.kr', 290, 'Nintendo Switch', TRUE, 0, 20.75, 3.9),
-(6, 'TitanEdge Publishing', 'United States', '2002-02-27', 'https://www.titanedge.com', 'info@titanedge.com', 1200, 'Xbox', TRUE, 0, 28.40, 11.6);
+INSERT INTO publisher_record (
+    publisher_id, name, country, established_date, website, contact_email, 
+    company_size, specialization, is_active, total_games_published, 
+    revenue_share_percentage, publisher_budget_range
+) VALUES
+(1, 'Solarbyte Studios', 'United States', '2010-03-15', 'https://www.solarbyte.com', 'contact@solarbyte.com', 320, 'RPG', TRUE, 0, 24.50, 6.3),
+(2, 'BlueNova Interactive', 'Japan', '2014-07-22', 'https://www.bluenova.jp', 'info@bluenova.jp', 210, 'Action', TRUE, 0, 30.00, 2.8),
+(3, 'IronPulse Games', 'United States', '2006-01-10', 'https://www.ironpulse.ca', 'support@ironpulse.ca', 980, 'FPS', TRUE, 0, 22.25, 9.7),
+(4, 'Stormveil Entertainment', 'Japan', '1998-06-05', 'https://www.stormveil.de', 'hello@stormveil.de', 720, 'Strategy', TRUE, 0, 19.80, 14.1),
+(5, 'DreamArcade Studio', 'Philippines', '2011-10-01', 'https://www.dreamarcade.ph', 'contact@dreamarcade.ph', 290, 'Adventure', TRUE, 0, 20.75, 3.9),
+(6, 'TitanEdge Publishing', 'United States', '2002-02-27', 'https://www.titanedge.com', 'info@titanedge.com', 1200, 'Sports', TRUE, 0, 28.40, 11.6),
+(7, 'QuantumLeaf Games', 'Japan', '2016-09-12', 'https://www.quantumleaf.jp', 'team@quantumleaf.jp', 150, 'Puzzle', TRUE, 0, 18.60, 2.1),
+(8, 'PixelForge Studios', 'Philippines', '2018-05-20', 'https://www.pixelforge.ph', 'support@pixelforge.ph', 95, 'Platformer', TRUE, 0, 16.40, 1.5),
+(9, 'RedHorizon Labs', 'United States', '2004-11-08', 'https://www.redhorizon.us', 'info@redhorizon.us', 670, 'Simulation', TRUE, 0, 27.00, 8.2),
+(10, 'SakuraSky Digital', 'Japan', '2009-04-18', 'https://www.sakurasky.jp', 'contact@sakurasky.jp', 430, 'Horror', TRUE, 0, 23.10, 5.4);
