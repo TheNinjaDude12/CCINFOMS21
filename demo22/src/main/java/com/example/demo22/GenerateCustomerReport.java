@@ -267,6 +267,14 @@ public class GenerateCustomerReport {
         stage.setScene(scene);
         stage.show();
     }
+    public void switchCountry(ActionEvent event) throws IOException {
+        System.out.println("works");
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("countrySort.fxml")));
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
 
     public void exportReport() {
         // Check if there's data to export

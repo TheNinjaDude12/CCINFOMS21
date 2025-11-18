@@ -34,8 +34,8 @@ public class UserMenuOptions {
 
         try {
 
-            Parent root = FXMLLoader.load(Objects.requireNonNull(
-                    getClass().getResource("userLogin.fxml")));
+            Parent root = FXMLLoader.load(
+                    getClass().getResource("/com/example/demo22/userLogIn.fxml"));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
 
             Scene scene = new Scene(root);

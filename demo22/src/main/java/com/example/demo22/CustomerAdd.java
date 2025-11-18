@@ -171,6 +171,9 @@ public class CustomerAdd {
             insertCustomer.setString(2, firstName);
             insertCustomer.setString(3, email.toLowerCase());
             insertCustomer.setString(4, registerDate);
+            String firstChar = country.substring(0,1).toUpperCase();
+            country = firstChar + country.substring(1).toLowerCase();
+
             insertCustomer.setString(5, country);
             insertCustomer.setString(6, platform);
             String password = lastNameField.getText() + 123;
