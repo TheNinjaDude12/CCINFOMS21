@@ -16,7 +16,7 @@
          </font>
       </Label>
       <Button layoutX="17.0" layoutY="541.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="115.0" text="Show Specific" />
-      <Button layoutX="769.0" layoutY="541.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="115.0" text="Back" />
+      <Button layoutX="769.0" layoutY="541.0" mnemonicParsing="false" onAction="#back" prefHeight="32.0" prefWidth="115.0" text="Back" />
       <TableView fx:id="table" layoutX="17.0" layoutY="81.0" prefHeight="439.0" prefWidth="867.0">
          <columns>
             <TableColumn prefWidth="57.0" />
