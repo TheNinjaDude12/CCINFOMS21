@@ -11,7 +11,7 @@
 
 <AnchorPane prefHeight="620.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo22.UserStore">
    <children>
-      <ImageView fitHeight="620.0" fitWidth="1000.0" pickOnBounds="true" preserveRatio="true"> <Image url="@/shopping-concept-cartons-or-paper-boxes-and-shopping-bag-in-red-shopping-cart-on-pink-background-online-shopping-consumers-can-shop-from-home-and-delivery-service-with-c (1).jpg" /> </ImageView>
+      <ImageView fitHeight="620.0" fitWidth="1000.0" pickOnBounds="true" preserveRatio="true"> <Image url="@/shop.jpg" /> </ImageView>
       <Text layoutX="14.0" layoutY="63.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Store" wrappingWidth="481.13671875">
          <font>
             <Font name="Century Gothic" size="63.0" />
