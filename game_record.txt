@@ -9,5 +9,8 @@ CREATE TABLE game_record(
 	`status` ENUM('Beta', 'Under Development', 'Released'),
 	`review_average` float DEFAULT 0,
 	`reviews` int DEFAULT 0,
-	`publisher_id` int NOT NULL
+	`publisher_id` int NOT NULL,
+	FOREIGN KEY (publisher_id) REFERENCES publisher_record(publisher_id),
+	`developer_id` int NOT NULL,
+	FOREIGN KEY (developer_id) REFERENCES developer_record(developer_id)
 );
