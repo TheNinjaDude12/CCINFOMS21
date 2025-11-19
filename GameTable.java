@@ -1,4 +1,4 @@
-package com.example.gamerecordgui;
+package com.example.demo22;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -235,8 +235,8 @@ public class GameTable {
         String sql = String.format("UPDATE game_record SET %s = ? WHERE game_id = ?", field);
 
         try (Connection connection = DriverManager.getConnection(
-                "jdbc:mysql://localhost:3306/gamemanagementdatabase",
-                "root","Password1234");
+                "jdbc:mysql://127.0.0.1:3307/gamemanagementdatabase",
+                "root", "");
              PreparedStatement pstmt = connection.prepareStatement(sql)) {
 
             pstmt.setString(1, text);
@@ -315,8 +315,8 @@ public class GameTable {
 
     private void deleteFromDatabase(int gameId) {
         try (Connection connection = DriverManager.getConnection(
-                "jdbc:mysql://localhost:3306/gamemanagementdatabase",
-                "root","Password1234")) {
+                "jdbc:mysql://127.0.0.1:3307/gamemanagementdatabase",
+                "root", "")) {
 
             // Check if game is active
             try (PreparedStatement checkStatus = connection.prepareStatement(
@@ -352,8 +352,8 @@ public class GameTable {
     private void loadGames() {
         ObservableList<Game> gameList = FXCollections.observableArrayList();
         try (Connection connection = DriverManager.getConnection(
-                "jdbc:mysql://localhost:3306/gamemanagementdatabase",
-                "root","Password1234");
+                "jdbc:mysql://127.0.0.1:3307/gamemanagementdatabase",
+                "root", "");
              PreparedStatement pstmt = connection.prepareStatement("SELECT * FROM game_record ORDER BY game_id");
              ResultSet rs = pstmt.executeQuery()) {
 
@@ -483,8 +483,8 @@ public class GameTable {
     private ObservableList<CustomerDetail> getGameCustomers(int gameId) {
         ObservableList<CustomerDetail> customers = FXCollections.observableArrayList();
         try (Connection conn = DriverManager.getConnection(
-                "jdbc:mysql://localhost:3306/gamemanagementdatabase",
-                "root","Password1234");
+                "jdbc:mysql://127.0.0.1:3307/gamemanagementdatabase",
+                "root", "");
              PreparedStatement pstmt = conn.prepareStatement(
                      "SELECT c.last_name, c.first_name, c.country, c.preferred_platform, g.game_id " +
                              "FROM customer_record c " +
