@@ -32,7 +32,7 @@ public class customerRecordController {
 
     public void addCustomer(ActionEvent event) throws IOException {
         System.out.println("works");
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("CustomerAdd.fxml")));
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("customerAdd.fxml")));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         Scene scene = new Scene(root);
         stage.setScene(scene);

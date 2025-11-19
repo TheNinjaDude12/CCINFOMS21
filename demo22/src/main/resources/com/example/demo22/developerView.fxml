@@ -14,7 +14,8 @@
       </Text>
       <Button layoutX="260.0" layoutY="121.0" mnemonicParsing="false" onAction="#viewDeveloperTable" prefHeight="52.0" prefWidth="168.0" text="View All Developers" />
       <Button layoutX="260.0" layoutY="196.0" mnemonicParsing="false" onAction="#addDeveloper" prefHeight="52.0" prefWidth="168.0" text="Add Developer" />
-      <Button layoutX="260.0" layoutY="273.0" mnemonicParsing="false" prefHeight="52.0" prefWidth="168.0" text="Generate Report" />
+      <!-- Added onAction here -->
+      <Button layoutX="260.0" layoutY="273.0" mnemonicParsing="false" onAction="#generateReport" prefHeight="52.0" prefWidth="168.0" text="Generate Report" />
       <Button layoutX="24.0" layoutY="410.0" mnemonicParsing="false" onAction="#back" prefHeight="30.0" prefWidth="85.0" text="Back" />
    </children>
 </AnchorPane>

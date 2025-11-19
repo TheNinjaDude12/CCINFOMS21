@@ -10,7 +10,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -39,7 +38,6 @@ public class DeveloperAdd {
         countryError.setVisible(false);
         emailError.setVisible(false);
 
-        // Validate Name
         if (nameField.getText().isEmpty()) {
             nameError.setText("Name must not be empty");
             nameError.setVisible(true);
@@ -52,7 +50,6 @@ public class DeveloperAdd {
             name = nameField.getText();
         }
 
-        // Validate Country
         if (countryField.getText().isEmpty()) {
             countryError.setText("Country must not be empty");
             countryError.setVisible(true);
@@ -65,7 +62,6 @@ public class DeveloperAdd {
             country = countryField.getText();
         }
 
-        // Validate Email
         if (emailField.getText().isEmpty()) {
             emailError.setText("Email must not be empty");
             emailError.setVisible(true);
@@ -78,9 +74,7 @@ public class DeveloperAdd {
             email = emailField.getText();
         }
 
-        // Website is optional, no validation needed unless you want to check format
         website = websiteField.getText();
-
         return isValid;
     }
 
@@ -148,7 +142,6 @@ public class DeveloperAdd {
     }
 
     public void back(ActionEvent event) throws IOException {
-        System.out.println("Returning to Developer Menu");
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("developerView.fxml")));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         Scene scene = new Scene(root);
