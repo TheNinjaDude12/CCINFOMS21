@@ -139,7 +139,9 @@ public class BuyGameView {
             while (resultSet.next()) {
                 String lastName = resultSet.getString("last_name");
                 String firstName = resultSet.getString("first_name");
-                String display = lastName + " " + firstName;
+                String email = resultSet.getString("email");  // ✅ GET EMAIL
+                // ✅ ADD EMAIL TO DISPLAY
+                String display = lastName + " " + firstName + " (" + email + ")";
                 customerList.add(display);
             }
 
@@ -184,14 +186,12 @@ public class BuyGameView {
             }
         });
 
-        // ✅ KEY FIX: Handle Enter and Escape keys
         customerComboBox.setOnKeyPressed(event -> {
             if (event.getCode() == javafx.scene.input.KeyCode.ENTER) {
                 event.consume();
 
                 String currentText = customerComboBox.getEditor().getText();
 
-                // Check for exact match
                 boolean exactMatch = false;
                 for (String customer : allCustomers) {
                     if (customer.equalsIgnoreCase(currentText)) {
@@ -207,7 +207,6 @@ public class BuyGameView {
                     }
                 }
 
-                // If no exact match, clear and reset
                 if (!exactMatch) {
                     isUpdating[0] = true;
                     customerComboBox.getEditor().clear();
@@ -233,7 +232,6 @@ public class BuyGameView {
             }
         });
 
-        // Selection handler
         customerComboBox.setOnAction(event -> {
             if (isUpdating[0]) {
                 return;
@@ -255,25 +253,27 @@ public class BuyGameView {
     }
 
     private void loadCustomerDetails(String customerName) {
-        // customerName format: "Garcia Derick"
+        // customerName format: "Garcia Derick (derick@email.com)"
         try {
-            String[] parts = customerName.trim().split(" ", 2);
-            if (parts.length < 2) {
-                showAlert(Alert.AlertType.ERROR, "Error", "Invalid customer name format");
+            // ✅ EXTRACT EMAIL FROM PARENTHESES
+            int emailStart = customerName.indexOf("(");
+            int emailEnd = customerName.indexOf(")");
+
+            if (emailStart == -1 || emailEnd == -1) {
+                showAlert(Alert.AlertType.ERROR, "Error", "Invalid customer format");
                 return;
             }
 
-            String lastName = parts[0];
-            String firstName = parts[1];
+            String email = customerName.substring(emailStart + 1, emailEnd).trim();
 
             Connection connection = DriverManager.getConnection(
                     "jdbc:mysql://127.0.0.1:3306/gamemanagementdatabase",
                     "root", "thunder1515");
 
+            // ✅ QUERY BY EMAIL (UNIQUE)
             PreparedStatement pstmt = connection.prepareStatement(
-                    "SELECT * FROM customer_record WHERE last_name = ? AND first_name = ?");
-            pstmt.setString(1, lastName);
-            pstmt.setString(2, firstName);
+                    "SELECT * FROM customer_record WHERE email = ?");
+            pstmt.setString(1, email);
 
             ResultSet resultSet = pstmt.executeQuery();
 
@@ -306,13 +306,18 @@ public class BuyGameView {
                     "jdbc:mysql://127.0.0.1:3306/gamemanagementdatabase",
                     "root", "thunder1515");
 
+            // ✅ GET game_id
             PreparedStatement pstmt = connection.prepareStatement(
-                    "SELECT title FROM game_record WHERE status = 'active' ORDER BY title");
+                    "SELECT game_id, title FROM game_record WHERE status = 'Released' ORDER BY title");
 
             ResultSet resultSet = pstmt.executeQuery();
 
             while (resultSet.next()) {
-                gameList.add(resultSet.getString("title"));
+                String title = resultSet.getString("title");
+                int gameId = resultSet.getInt("game_id");
+                // ✅ ADD GAME ID TO DISPLAY
+                String display = title + " (ID: " + gameId + ")";
+                gameList.add(display);
             }
 
             resultSet.close();
@@ -334,7 +339,6 @@ public class BuyGameView {
 
         final boolean[] isUpdatingGame = {false};
 
-        // Text change listener - filters as user types
         gameComboBox.getEditor().textProperty().addListener((obs, oldValue, newValue) -> {
             if (isUpdatingGame[0]) {
                 return;
@@ -342,7 +346,6 @@ public class BuyGameView {
 
             final String searchText = newValue == null ? "" : newValue.toLowerCase();
 
-            // Only filter if nothing is selected
             if (gameComboBox.getSelectionModel().getSelectedItem() == null) {
                 filteredGames.setPredicate(game -> {
                     if (searchText.isEmpty()) {
@@ -357,14 +360,12 @@ public class BuyGameView {
             }
         });
 
-        // ✅ KEY FIX: Handle Enter and Escape keys
         gameComboBox.setOnKeyPressed(event -> {
             if (event.getCode() == javafx.scene.input.KeyCode.ENTER) {
-                event.consume(); // Prevent default behavior
+                event.consume();
 
                 String currentText = gameComboBox.getEditor().getText();
 
-                // Check if current text matches a game exactly
                 boolean exactMatch = false;
                 for (String game : allGames) {
                     if (game.equalsIgnoreCase(currentText)) {
@@ -379,12 +380,11 @@ public class BuyGameView {
                     }
                 }
 
-                // If no exact match, clear and reset filter
                 if (!exactMatch) {
                     isUpdatingGame[0] = true;
                     gameComboBox.getEditor().clear();
                     gameComboBox.getSelectionModel().clearSelection();
-                    filteredGames.setPredicate(p -> true); // Show all games
+                    filteredGames.setPredicate(p -> true);
                     gameComboBox.hide();
                     isUpdatingGame[0] = false;
                 }
@@ -394,19 +394,17 @@ public class BuyGameView {
                 isUpdatingGame[0] = true;
                 gameComboBox.getEditor().clear();
                 gameComboBox.getSelectionModel().clearSelection();
-                filteredGames.setPredicate(p -> true); // Show all games
+                filteredGames.setPredicate(p -> true);
                 gameComboBox.hide();
                 isUpdatingGame[0] = false;
             }
             else if (event.getCode() == javafx.scene.input.KeyCode.DOWN) {
-                // Show dropdown when pressing down arrow
                 if (!gameComboBox.isShowing()) {
                     gameComboBox.show();
                 }
             }
         });
 
-        // Selection handler - when clicking an item from dropdown
         gameComboBox.setOnAction(event -> {
             if (isUpdatingGame[0]) {
                 return;
@@ -425,15 +423,29 @@ public class BuyGameView {
             }
         });
     }
-    private void loadGameDetails(String gameTitle) {
+    private void loadGameDetails(String gameDisplay) {
+        // gameDisplay format: "Persona 3 Reload (ID: 1)"
         try {
+            // ✅ EXTRACT GAME ID FROM DISPLAY
+            int idStart = gameDisplay.lastIndexOf("(ID: ");
+            int idEnd = gameDisplay.lastIndexOf(")");
+
+            if (idStart == -1 || idEnd == -1) {
+                showAlert(Alert.AlertType.ERROR, "Error", "Invalid game format");
+                return;
+            }
+
+            String gameIdStr = gameDisplay.substring(idStart + 5, idEnd).trim();
+            int gameId = Integer.parseInt(gameIdStr);
+
             Connection connection = DriverManager.getConnection(
                     "jdbc:mysql://127.0.0.1:3306/gamemanagementdatabase",
                     "root", "thunder1515");
 
+            // ✅ QUERY BY GAME_ID (UNIQUE)
             PreparedStatement pstmt = connection.prepareStatement(
-                    "SELECT * FROM game_record WHERE title = ?");
-            pstmt.setString(1, gameTitle);
+                    "SELECT * FROM game_record WHERE game_id = ?");
+            pstmt.setInt(1, gameId);
 
             ResultSet resultSet = pstmt.executeQuery();
 
@@ -448,6 +460,8 @@ public class BuyGameView {
                 reviewText.setText(String.valueOf(resultSet.getInt("reviews")));
 
                 buyGameButton.setDisable(false);
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Error", "Game not found");
             }
 
             resultSet.close();
@@ -458,9 +472,12 @@ public class BuyGameView {
             e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Error",
                     "Failed to load game details");
+        } catch(NumberFormatException e) {
+            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Error",
+                    "Invalid game ID format");
         }
     }
-
     public void buyGame() {
         // Validation
         if (customerComboBox.getValue() == null || gameComboBox.getValue() == null) {

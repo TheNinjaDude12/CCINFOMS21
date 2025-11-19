@@ -214,7 +214,7 @@ public class CustomerAdd {
 
     public void back(ActionEvent event) throws IOException {
         System.out.println("works");
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("customerView.fxml")));
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/com/example/demo22/customerView.fxml")));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         Scene scene = new Scene(root);
         stage.setScene(scene);

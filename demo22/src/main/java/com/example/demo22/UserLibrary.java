@@ -23,139 +23,148 @@ import java.sql.*;
 import java.util.Objects;
 
 public class UserLibrary {
-    @FXML
-    private Text gameRelease;
-    @FXML
-    private Text gameGenre;
-    @FXML
-    private Text gameTitle;
-    @FXML
-    private Text welcomeText;
-    @FXML
-    private TableView<Game> gamesTable;
-    @FXML
-    public TextField filterText;
+    @FXML private Text gameRelease;
+    @FXML private Text gameGenre;
+    @FXML private Text gameTitle;
+    @FXML private Text welcomeText;
+    @FXML private TableView<Game> gamesTable;
+    @FXML public TextField filterText;
+
     public class Game {
         private String title;
 
         Game(String title) {
             this.title = title;
         }
-        public  String getTitle() {
+
+        public String getTitle() {
             return title;
         }
+
         public void setTitle(String title) {
             this.title = title;
         }
     }
-    public static int user_id = UserLogIn.user_id;
-
-
-
 
     public void initialize() {
-        TableColumn gameName = new TableColumn("Games");
-        gamesTable.getColumns().addAll(gameName);
-        ObservableList<UserLibrary.Game> games = FXCollections.observableArrayList();
+        // ✅ FIX: Get user_id fresh from UserLogIn each time
+        int currentUserId = UserLogIn.user_id;
+
+        // ✅ FIX: Add validation
+        if (currentUserId <= 0) {
+            System.err.println("Invalid user_id: " + currentUserId);
+            return;
+        }
+
+        TableColumn<Game, String> gameName = new TableColumn<>("Games");
+        gamesTable.getColumns().add(gameName);
+
+        ObservableList<Game> games = FXCollections.observableArrayList();
+
         gamesTable.setEditable(false);
         gamesTable.setStyle(
-                "-fx-background-color: #1b2838;" +  // Dark blue-gray background
-                        "-fx-control-inner-background: #16202d;" +  // Darker row background
+                "-fx-background-color: #1b2838;" +
+                        "-fx-control-inner-background: #16202d;" +
                         "-fx-table-cell-border-color: transparent;" +
-                        "-fx-text-fill: white;"  // White text
+                        "-fx-text-fill: white;"
         );
-
 
         try {
             Connection connection = DriverManager.getConnection(
                     "jdbc:mysql://127.0.0.1:3306/gamemanagementdatabase",
                     "root", "thunder1515");
 
+            // ✅ FIX: Use PreparedStatement with currentUserId
             PreparedStatement pstmt = connection.prepareStatement(
-                        "SELECT title from game_record gr \n" +
-                            "JOIN transaction_log tl ON gr.game_id = tl.game_id\n" +
-                            "JOIN customer_record cr ON cr.customer_id = tl.customer_id " + "WHERE tl.customer_id =" + user_id);
+                    "SELECT DISTINCT gr.title FROM game_record gr " +
+                            "JOIN transaction_log tl ON gr.game_id = tl.game_id " +
+                            "WHERE tl.customer_id = ? AND tl.status = 'Paid'");
+            pstmt.setInt(1, currentUserId);
 
             ResultSet resultSet = pstmt.executeQuery();
+
             while(resultSet.next()) {
                 games.add(new Game(resultSet.getString("title")));
             }
 
-            PreparedStatement pstmt2 = connection.prepareStatement("SELECT first_name FROM customer_record WHERE customer_id = " + user_id);
+            // Get customer name
+            PreparedStatement pstmt2 = connection.prepareStatement(
+                    "SELECT first_name FROM customer_record WHERE customer_id = ?");
+            pstmt2.setInt(1, currentUserId);
+
             ResultSet resultSet2 = pstmt2.executeQuery();
+
             if (resultSet2.next()) {
                 welcomeText.setText("Welcome " + resultSet2.getString("first_name"));
             }
 
-
-
-
-
+            resultSet.close();
+            resultSet2.close();
+            pstmt.close();
+            pstmt2.close();
             connection.close();
 
         } catch(SQLException e) {
             e.printStackTrace();
         }
+
         gameName.setCellValueFactory(new PropertyValueFactory<>("title"));
         gameName.prefWidthProperty().bind(gamesTable.widthProperty());
-        gamesTable.setItems(games);
+
+        // Setup filtered and sorted list
+        FilteredList<Game> filteredData = new FilteredList<>(games, b -> true);
+
+        filterText.textProperty().addListener((observable, oldValue, newValue) -> {
+            filteredData.setPredicate(game -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+                String searchKeyword = newValue.toLowerCase();
+                return game.getTitle().toLowerCase().contains(searchKeyword);
+            });
+        });
+
+        SortedList<Game> sortedData = new SortedList<>(filteredData);
+        sortedData.comparatorProperty().bind(gamesTable.comparatorProperty());
+        gamesTable.setItems(sortedData);
+
         gameName.setCellFactory(TextFieldTableCell.forTableColumn());
+
         gamesTable.setOnMouseClicked(event -> {
             Game selectedGame = gamesTable.getSelectionModel().getSelectedItem();
-            if (selectedGame != null && !selectedGame.getTitle().equals("Games")) {
+            if (selectedGame != null) {
                 gameTitle.setText(selectedGame.getTitle());
-
 
                 try {
                     Connection connection = DriverManager.getConnection(
                             "jdbc:mysql://127.0.0.1:3306/gamemanagementdatabase",
                             "root", "thunder1515");
 
-                    PreparedStatement pstmt2 = connection.prepareStatement(
-                            "SELECT genre, release_date FROM game_record WHERE title = '" + selectedGame.getTitle() + "'"  );
+                    PreparedStatement pstmt = connection.prepareStatement(
+                            "SELECT genre, release_date FROM game_record WHERE title = ?");
+                    pstmt.setString(1, selectedGame.getTitle());
 
-                    ResultSet resultSet2 = pstmt2.executeQuery();
-                    if (resultSet2.next()) {
-                        gameGenre.setText(resultSet2.getString("genre"));
-                        gameRelease.setText(resultSet2.getString("release_date"));
+                    ResultSet resultSet = pstmt.executeQuery();
+
+                    if (resultSet.next()) {
+                        gameGenre.setText(resultSet.getString("genre"));
+                        gameRelease.setText(resultSet.getString("release_date"));
                     }
 
+                    resultSet.close();
+                    pstmt.close();
                     connection.close();
 
                 } catch(SQLException e) {
-                    System.out.println("Error");
+                    e.printStackTrace();
                 }
             }
-
         });
-
-        FilteredList<Game> filteredData = new FilteredList<>(games, b -> true);
-         filterText.textProperty().addListener((observable, oldValue, newValue) -> {
-            filteredData.setPredicate(game -> {
-                if (newValue == null || newValue.isEmpty()) {
-                    return true;
-                }
-                String searchKeyword = newValue.toLowerCase();
-                if(game.getTitle().toLowerCase().indexOf(searchKeyword) > -1) {
-                    return true;
-                }
-
-                return false;
-            });
-
-
-
-        });
-        SortedList<UserLibrary.Game> sortedData = new SortedList<>(filteredData);
-        sortedData.comparatorProperty().bind(gamesTable.comparatorProperty());
-        gamesTable.setItems(sortedData);
-
-
     }
 
     public void back(ActionEvent event) throws IOException {
-        System.out.println("works");
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("userMenuOptions.fxml")));
+        Parent root = FXMLLoader.load(Objects.requireNonNull(
+                getClass().getResource("userMenuOptions.fxml")));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         Scene scene = new Scene(root);
         stage.setScene(scene);

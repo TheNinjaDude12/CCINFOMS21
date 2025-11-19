@@ -7,5 +7,6 @@ CREATE TABLE customer_record(
     country VARCHAR(100),
     preferred_platform VARCHAR(200) DEFAULT 'None',
     total_spent DECIMAL(10,2) DEFAULT 0.00,
-    games_owned INT DEFAULT 0
+    games_owned INT DEFAULT 0,
+    password VARCHAR(45)
 );

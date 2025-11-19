@@ -2,22 +2,21 @@ package com.example.demo22;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
-
 import java.io.IOException;
 import java.sql.*;
 import java.util.Objects;
@@ -45,7 +44,6 @@ public class DeveloperTable {
             this.gamesDeveloped = gamesDeveloped;
         }
 
-        // Getters
         public int getId() { return id; }
         public String getName() { return name; }
         public String getCountry() { return country; }
@@ -53,7 +51,6 @@ public class DeveloperTable {
         public String getWebsite() { return website; }
         public int getGamesDeveloped() { return gamesDeveloped; }
 
-        // Setters
         public void setId(int id) { this.id = id; }
         public void setName(String name) { this.name = name; }
         public void setCountry(String country) { this.country = country; }
@@ -70,6 +67,7 @@ public class DeveloperTable {
         TableColumn<Developer, String> websiteCol = new TableColumn<>("Website");
         TableColumn<Developer, Integer> gamesDevCol = new TableColumn<>("Games Developed");
 
+        developerTable.getColumns().clear();
         developerTable.getColumns().addAll(devIdCol, nameCol, countryCol, emailCol, websiteCol, gamesDevCol);
 
         devIdCol.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -87,7 +85,6 @@ public class DeveloperTable {
     }
 
     private void setupEditableColumns() {
-        // Name Column
         TableColumn<Developer, String> nameCol = (TableColumn<Developer, String>) developerTable.getColumns().get(1);
         nameCol.setCellFactory(TextFieldTableCell.forTableColumn());
         nameCol.setOnEditCommit(t -> {
@@ -97,11 +94,10 @@ public class DeveloperTable {
                 alterDeveloperData(dev.getName(), dev.getId(), "name");
             } else {
                 showAlert(Alert.AlertType.ERROR, "Invalid Input", "Name cannot be empty or a number.");
-                t.getTableView().getItems().set(t.getTablePosition().getRow(), t.getRowValue()); // Revert
+                developerTable.refresh();
             }
         });
 
-        // Country Column
         TableColumn<Developer, String> countryCol = (TableColumn<Developer, String>) developerTable.getColumns().get(2);
         countryCol.setCellFactory(TextFieldTableCell.forTableColumn());
         countryCol.setOnEditCommit(t -> {
@@ -111,34 +107,31 @@ public class DeveloperTable {
                 alterDeveloperData(dev.getCountry(), dev.getId(), "country");
             } else {
                 showAlert(Alert.AlertType.ERROR, "Invalid Input", "Country cannot be empty or a number.");
-                t.getTableView().getItems().set(t.getTablePosition().getRow(), t.getRowValue()); // Revert
+                developerTable.refresh();
             }
         });
 
-        // Email Column
         TableColumn<Developer, String> emailCol = (TableColumn<Developer, String>) developerTable.getColumns().get(3);
         emailCol.setCellFactory(TextFieldTableCell.forTableColumn());
         emailCol.setOnEditCommit(t -> {
-            if (t.getNewValue() != null && !t.getNewValue().isEmpty()) {
+            if (t.getNewValue() != null && !t.getNewValue().isEmpty() && t.getNewValue().contains("@")) {
                 Developer dev = t.getRowValue();
                 dev.setEmail(t.getNewValue());
                 alterDeveloperData(dev.getEmail(), dev.getId(), "email");
             } else {
-                showAlert(Alert.AlertType.ERROR, "Invalid Input", "Email cannot be empty.");
-                t.getTableView().getItems().set(t.getTablePosition().getRow(), t.getRowValue()); // Revert
+                showAlert(Alert.AlertType.ERROR, "Invalid Input", "Email cannot be empty or invalid.");
+                developerTable.refresh();
             }
         });
 
-        // Website Column
         TableColumn<Developer, String> websiteCol = (TableColumn<Developer, String>) developerTable.getColumns().get(4);
         websiteCol.setCellFactory(TextFieldTableCell.forTableColumn());
         websiteCol.setOnEditCommit(t -> {
             Developer dev = t.getRowValue();
-            dev.setWebsite(t.getNewValue()); // Website can be empty
+            dev.setWebsite(t.getNewValue());
             alterDeveloperData(dev.getWebsite(), dev.getId(), "website");
         });
     }
-
 
     public void alterDeveloperData(String text, int id, String field) {
         String sql = String.format("UPDATE developer_record SET %s = ? WHERE developer_id = ?", field);
@@ -200,19 +193,12 @@ public class DeveloperTable {
         Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
         confirmAlert.setTitle("Confirm Deletion");
         confirmAlert.setHeaderText("Delete Developer?");
-        confirmAlert.setContentText(
-                "Are you sure you want to delete:\n\n" +
-                        "ID: " + dev.getId() + "\n" +
-                        "Name: " + dev.getName() + "\n" +
-                        "Email: " + dev.getEmail() + "\n\n" +
-                        "This action cannot be undone!"
-        );
+        confirmAlert.setContentText("Are you sure you want to delete: " + dev.getName() + "?");
 
         Optional<ButtonType> result = confirmAlert.showAndWait();
-
         if (result.isPresent() && result.get() == ButtonType.OK) {
             deleteFromDatabase(dev.getId());
-            loadDevelopers(); // Refresh table
+            loadDevelopers();
         }
     }
 
@@ -221,29 +207,23 @@ public class DeveloperTable {
                 "jdbc:mysql://127.0.0.1:3306/gamemanagementdatabase",
                 "root", "thunder1515")) {
 
-            // Check if developer has associated games
             try (PreparedStatement checkGames = connection.prepareStatement(
                     "SELECT COUNT(*) FROM game_record WHERE developer_id = ?")) {
                 checkGames.setInt(1, developerId);
                 try (ResultSet rs = checkGames.executeQuery()) {
                     if (rs.next() && rs.getInt(1) > 0) {
                         showAlert(Alert.AlertType.WARNING, "Cannot Delete",
-                                "This developer is associated with " + rs.getInt(1) + " game(s).\n" +
-                                        "You must re-assign or delete those games first.");
+                                "This developer has associated games. Cannot delete.");
                         return;
                     }
                 }
             }
 
-            // If no games, proceed with deletion
             try (PreparedStatement deleteStmt = connection.prepareStatement(
                     "DELETE FROM developer_record WHERE developer_id = ?")) {
                 deleteStmt.setInt(1, developerId);
-                int rowsAffected = deleteStmt.executeUpdate();
-
-                if (rowsAffected > 0) {
-                    showAlert(Alert.AlertType.INFORMATION, "Success", "Developer deleted successfully!");
-                }
+                deleteStmt.executeUpdate();
+                showAlert(Alert.AlertType.INFORMATION, "Success", "Developer deleted successfully!");
             }
 
         } catch (SQLException e) {
@@ -256,8 +236,9 @@ public class DeveloperTable {
         ObservableList<Developer> devList = FXCollections.observableArrayList();
         try (Connection connection = DriverManager.getConnection(
                 "jdbc:mysql://127.0.0.1:3306/gamemanagementdatabase",
-                "root", "thunder1515");
-             PreparedStatement pstmt = connection.prepareStatement("SELECT * FROM developer_record ORDER BY developer_id");
+                "root", "");
+             PreparedStatement pstmt = connection.prepareStatement(
+                     "SELECT d.*, (SELECT COUNT(*) FROM game_record g WHERE g.developer_id = d.developer_id) as real_games_count FROM developer_record d ORDER BY d.developer_id");
              ResultSet rs = pstmt.executeQuery()) {
 
             while (rs.next()) {
@@ -267,7 +248,7 @@ public class DeveloperTable {
                         rs.getString("country"),
                         rs.getString("email"),
                         rs.getString("website"),
-                        rs.getInt("games_developed") // This should ideally be a COUNT from game_record
+                        rs.getInt("real_games_count")
                 ));
             }
             developerTable.setItems(devList);
@@ -286,7 +267,6 @@ public class DeveloperTable {
         content.setPadding(new Insets(20));
         content.setPrefWidth(650);
 
-        // --- DEVELOPER INFORMATION ---
         Label devInfoHeader = new Label("═══ DEVELOPER INFORMATION ═══");
         devInfoHeader.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
 
@@ -305,7 +285,6 @@ public class DeveloperTable {
         devInfo.add(new Label("Website:"), 0, 4);
         devInfo.add(new Label(dev.getWebsite() != null ? dev.getWebsite() : "N/A"), 1, 4);
 
-        // --- GAMES DEVELOPED ---
         Label gamesHeader = new Label("═══ GAMES DEVELOPED ═══");
         gamesHeader.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
 
@@ -325,25 +304,15 @@ public class DeveloperTable {
         statusCol.setPrefWidth(120);
 
         gamesTable.getColumns().addAll(titleCol, priceCol, statusCol);
-
-        // Load games
         ObservableList<GameRecord> games = getDeveloperGames(dev.getId());
         gamesTable.setItems(games);
 
-        if (games.isEmpty()) {
-            Label noGames = new Label("No games found for this developer.");
-            noGames.setStyle("-fx-font-style: italic; -fx-text-fill: gray;");
-            content.getChildren().addAll(devInfoHeader, devInfo, gamesHeader, noGames);
-        } else {
-            content.getChildren().addAll(devInfoHeader, devInfo, gamesHeader, gamesTable);
-        }
-
+        content.getChildren().addAll(devInfoHeader, devInfo, gamesHeader, gamesTable);
         dialog.getDialogPane().setContent(content);
         dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
         dialog.showAndWait();
     }
 
-    // Helper class for the games table in the dialog
     public static class GameRecord {
         private String title;
         private double price;
@@ -384,18 +353,13 @@ public class DeveloperTable {
         return games;
     }
 
-
     public boolean checkIfValidString(String text) {
-        if (text == null || text.isEmpty()) {
-            return false;
-        }
+        if (text == null || text.isEmpty()) return false;
         return !isInteger(text);
     }
 
     public static boolean isInteger(String str) {
-        if (str == null || str.isEmpty()) {
-            return false;
-        }
+        if (str == null || str.isEmpty()) return false;
         try {
             Integer.parseInt(str);
             return true;
@@ -413,7 +377,6 @@ public class DeveloperTable {
     }
 
     public void back(ActionEvent event) throws IOException {
-        System.out.println("Returning to Developer Menu");
         Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("developerView.fxml")));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         Scene scene = new Scene(root);

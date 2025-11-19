@@ -31,17 +31,18 @@ public class UserStore {
     @FXML private Text priceText;
     @FXML private Text reviewText;
     @FXML private ComboBox<String> customerComboBox;
-    @FXML private ComboBox<String> gameComboBox;  // Changed from ChoiceBox
+    @FXML private ComboBox<String> gameComboBox;
     @FXML private Button buyGameButton;
     @FXML private ChoiceBox<String> paymentSelector;
     private ArrayList<String> paymentMethods;
     private int game_id;
+
     public void initialize() {
         setupPaymentSelector();
         setupGameComboBox();
         buyGameButton.setDisable(true);
-
     }
+
     private void setupGameComboBox() {
         ArrayList<String> gameList = new ArrayList<>();
 
@@ -50,13 +51,18 @@ public class UserStore {
                     "jdbc:mysql://127.0.0.1:3306/gamemanagementdatabase",
                     "root", "thunder1515");
 
+            // ✅ GET release_date
             PreparedStatement pstmt = connection.prepareStatement(
-                    "SELECT title FROM game_record WHERE status = 'active' ORDER BY title");
+                    "SELECT title, release_date FROM game_record WHERE status = 'Released' ORDER BY title");
 
             ResultSet resultSet = pstmt.executeQuery();
 
             while (resultSet.next()) {
-                gameList.add(resultSet.getString("title"));
+                String title = resultSet.getString("title");
+                String releaseDate = resultSet.getString("release_date");
+                // ✅ ADD RELEASE DATE TO DISPLAY
+                String display = title + " (" + releaseDate + ")";
+                gameList.add(display);
             }
 
             resultSet.close();
@@ -101,14 +107,12 @@ public class UserStore {
             }
         });
 
-        // ✅ KEY FIX: Handle Enter and Escape keys
         gameComboBox.setOnKeyPressed(event -> {
             if (event.getCode() == javafx.scene.input.KeyCode.ENTER) {
-                event.consume(); // Prevent default behavior
+                event.consume();
 
                 String currentText = gameComboBox.getEditor().getText();
 
-                // Check if current text matches a game exactly
                 boolean exactMatch = false;
                 for (String game : allGames) {
                     if (game.equalsIgnoreCase(currentText)) {
@@ -123,12 +127,11 @@ public class UserStore {
                     }
                 }
 
-                // If no exact match, clear and reset filter
                 if (!exactMatch) {
                     isUpdatingGame[0] = true;
                     gameComboBox.getEditor().clear();
                     gameComboBox.getSelectionModel().clearSelection();
-                    filteredGames.setPredicate(p -> true); // Show all games
+                    filteredGames.setPredicate(p -> true);
                     gameComboBox.hide();
                     isUpdatingGame[0] = false;
                 }
@@ -138,19 +141,17 @@ public class UserStore {
                 isUpdatingGame[0] = true;
                 gameComboBox.getEditor().clear();
                 gameComboBox.getSelectionModel().clearSelection();
-                filteredGames.setPredicate(p -> true); // Show all games
+                filteredGames.setPredicate(p -> true);
                 gameComboBox.hide();
                 isUpdatingGame[0] = false;
             }
             else if (event.getCode() == javafx.scene.input.KeyCode.DOWN) {
-                // Show dropdown when pressing down arrow
                 if (!gameComboBox.isShowing()) {
                     gameComboBox.show();
                 }
             }
         });
 
-        // Selection handler - when clicking an item from dropdown
         gameComboBox.setOnAction(event -> {
             if (isUpdatingGame[0]) {
                 return;
@@ -170,15 +171,30 @@ public class UserStore {
         });
     }
 
-    private void loadGameDetails(String gameTitle) {
+    private void loadGameDetails(String gameDisplay) {
+        // gameDisplay format: "Persona 3 Reload (2024-02-02)"
         try {
+            // ✅ EXTRACT TITLE AND RELEASE DATE FROM DISPLAY
+            int dateStart = gameDisplay.lastIndexOf("(");
+            int dateEnd = gameDisplay.lastIndexOf(")");
+
+            if (dateStart == -1 || dateEnd == -1) {
+                showAlert(Alert.AlertType.ERROR, "Error", "Invalid game format");
+                return;
+            }
+
+            String title = gameDisplay.substring(0, dateStart).trim();
+            String releaseDate = gameDisplay.substring(dateStart + 1, dateEnd).trim();
+
             Connection connection = DriverManager.getConnection(
                     "jdbc:mysql://127.0.0.1:3306/gamemanagementdatabase",
                     "root", "thunder1515");
 
+            // ✅ QUERY BY BOTH TITLE AND RELEASE_DATE
             PreparedStatement pstmt = connection.prepareStatement(
-                    "SELECT * FROM game_record WHERE title = ?");
-            pstmt.setString(1, gameTitle);
+                    "SELECT * FROM game_record WHERE title = ? AND release_date = ?");
+            pstmt.setString(1, title);
+            pstmt.setString(2, releaseDate);
 
             ResultSet resultSet = pstmt.executeQuery();
 
@@ -193,6 +209,8 @@ public class UserStore {
                 game_id = resultSet.getInt("game_id");
 
                 buyGameButton.setDisable(false);
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Error", "Game not found");
             }
 
             resultSet.close();
@@ -206,7 +224,6 @@ public class UserStore {
         }
     }
 
-
     private void showAlert(Alert.AlertType type, String title, String message) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
@@ -214,8 +231,9 @@ public class UserStore {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
     private void setupPaymentSelector() {
-        paymentMethods =  new ArrayList<>();
+        paymentMethods = new ArrayList<>();
         paymentMethods.add("Cash");
         paymentMethods.add("Debit Card");
         paymentMethods.add("Credit Card");
@@ -226,12 +244,9 @@ public class UserStore {
         ObservableList<String> payment = FXCollections.observableArrayList(paymentMethods);
         paymentSelector.setItems(payment);
         paymentSelector.setValue("Cash");
-
-
     }
+
     public void buyGame() {
-
-
         int customerId = UserLogIn.user_id;
         int gameId = game_id;
         double price = Double.parseDouble(priceText.getText());
@@ -251,7 +266,7 @@ public class UserStore {
 
             if (rsOwnership.next() && rsOwnership.getInt(1) > 0) {
                 showAlert(Alert.AlertType.WARNING, "Already Owned",
-                        "This customer already owns this game!");
+                        "You already own this game!");
                 connection.close();
                 return;
             }
@@ -259,7 +274,7 @@ public class UserStore {
             // Insert transaction
             PreparedStatement insertTx = connection.prepareStatement(
                     "INSERT INTO transaction_log(customer_id, game_id, purchase_date, " +
-                            "payment_method, amount, status) VALUES (?, ?, CURDATE(), ?, ?, 'Paid')");
+                            "payment_method, amount, status) VALUES (?, ?, NOW(), ?, ?, 'Paid')");
             insertTx.setInt(1, customerId);
             insertTx.setInt(2, gameId);
             insertTx.setString(3, paymentSelector.getValue());
@@ -283,7 +298,10 @@ public class UserStore {
             connection.close();
 
             showAlert(Alert.AlertType.INFORMATION, "Purchase Successful",
-                    "Game purchased successfully!\n\n");
+                    "Game purchased successfully!\n\n" +
+                            "Game: " + gameComboBox.getValue() + "\n" +
+                            "Amount: ₱" + String.format("%.2f", price) + "\n" +
+                            "Payment: " + paymentSelector.getValue());
 
             clearForm();
 
@@ -293,14 +311,14 @@ public class UserStore {
                     "Failed to complete purchase: " + e.getMessage());
         } catch(NumberFormatException e) {
             showAlert(Alert.AlertType.ERROR, "Error",
-                    "Invalid customer ID or game ID");
+                    "Invalid game ID or price");
         }
     }
 
     private void clearForm() {
         gameComboBox.setValue(null);
+        gameComboBox.getEditor().clear();
         buyGameButton.setDisable(true);
-
 
         genreText.setText("");
         releaseDateText.setText("");
@@ -310,14 +328,13 @@ public class UserStore {
         priceText.setText("");
         reviewText.setText("");
     }
+
     public void back(ActionEvent event) throws IOException {
         Parent root = FXMLLoader.load(Objects.requireNonNull(
-                getClass().getResource("userMenuOptions.fxml")));
+                getClass().getResource("/com/example/demo22/userMenuOptions.fxml")));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
     }
-
-
 }
