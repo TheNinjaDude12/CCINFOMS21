@@ -62,11 +62,13 @@ public class AddPublisherController {
             return false;
         }
 
-        try {
-            Integer.parseInt(gamesPublishedField.getText().trim());
-        } catch (NumberFormatException e) {
-            showAlert(Alert.AlertType.WARNING, "Validation Error", "Games Published must be a valid number");
-            return false;
+        if (!gamesPublishedField.getText().trim().isEmpty()){
+            try {
+                Integer.parseInt(gamesPublishedField.getText().trim());
+            } catch (NumberFormatException e) {
+                showAlert(Alert.AlertType.WARNING, "Validation Error", "Games Published must be a valid number");
+                return false;
+            }
         }
 
         try {
@@ -128,7 +130,12 @@ public class AddPublisherController {
         int size = Integer.parseInt(sizeField.getText().trim());
         String specialization = specializationField.getText().trim();
         boolean isActive = isActiveCheckBox.isSelected();
-        int gamesPublished = Integer.parseInt(gamesPublishedField.getText().trim());
+        int gamesPublished;
+        if (gamesPublishedField.getText().trim().isEmpty()){
+            gamesPublished = 0;
+        } else {
+            gamesPublished = Integer.parseInt(gamesPublishedField.getText().trim());
+        }
         double share = Double.parseDouble(shareField.getText().trim());
         float budget = Float.parseFloat(budgetField.getText().trim());
 
@@ -139,7 +146,6 @@ public class AddPublisherController {
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
-            // Set parameters
             pstmt.setString(1, name);
             pstmt.setString(2, country);
             pstmt.setDate(3, establishedDate);
@@ -152,7 +158,6 @@ public class AddPublisherController {
             pstmt.setDouble(10, share);
             pstmt.setFloat(11, budget);
 
-            // Execute insert
             int rowsAffected = pstmt.executeUpdate();
 
             if (rowsAffected > 0) {
@@ -160,8 +165,6 @@ public class AddPublisherController {
                         "Publisher '" + name + "' added successfully!\nEstablished Date: " + localDate);
                 clearTextAddPublisher();
 
-                // Optional: Navigate back to publisher view
-                // goBackToPublisherView(event);
             } else {
                 showAlert(Alert.AlertType.ERROR, "Error", "Failed to add publisher");
             }

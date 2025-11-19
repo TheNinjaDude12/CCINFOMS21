@@ -6,10 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
@@ -35,10 +32,12 @@ public class PublisherController {
     public TableColumn<publisherTable.Publisher, Float> publisher_budget;
 
     public TextField searchIDField;
+    public TextField deleteIDField;
 
     private static final String DB_URL = "jdbc:mysql://localhost:3306/CCINFOMDataBase";
     private static final String DB_USER = "root";
     private static final String DB_PASSWORD = "airnest122";
+
 
     @FXML
     public void initialize(){
@@ -190,6 +189,106 @@ public class PublisherController {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void deletePublisherIfNoGames(int publisherId) {
+        Connection conn = null;
+        PreparedStatement checkStmt = null;
+        PreparedStatement deleteStmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+            String checkSql = "SELECT name, total_games_published FROM publisher_record WHERE publisher_id = ?";
+            checkStmt = conn.prepareStatement(checkSql);
+            checkStmt.setInt(1, publisherId);
+            rs = checkStmt.executeQuery();
+
+            if (!rs.next()) {
+                showAlert(Alert.AlertType.WARNING, "Not Found",
+                        "No publisher found with ID: " + publisherId);
+                return;
+            }
+
+            String publisherName = rs.getString("name");
+            int gamesPublished = rs.getInt("total_games_published");
+            if (gamesPublished > 0) {
+                showAlert(Alert.AlertType.ERROR, "Cannot Delete",
+                        "Cannot delete publisher '" + publisherName + "'!\n\n" +
+                                "This publisher has " + gamesPublished + " game(s) published.\n" +
+                                "Only publishers with 0 games can be deleted.");
+                return;
+            }
+
+            Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmAlert.setTitle("Confirm Deletion");
+            confirmAlert.setHeaderText("Delete Publisher?");
+            confirmAlert.setContentText("Are you sure you want to delete:\n\n" +
+                    "ID: " + publisherId + "\n" +
+                    "Name: " + publisherName + "\n" +
+                    "Games Published: 0\n\n" +
+                    "This action cannot be undone!");
+
+
+            if (confirmAlert.showAndWait().get() != ButtonType.OK) {
+                return;
+            }
+
+            String deleteSql = "DELETE FROM publisher_record WHERE publisher_id = ?";
+            deleteStmt = conn.prepareStatement(deleteSql);
+            deleteStmt.setInt(1, publisherId);
+
+            int rowsDeleted = deleteStmt.executeUpdate();
+
+            if (rowsDeleted > 0) {
+                deleteIDField.clear();
+                loadPublishersFromDatabase();
+            } else {
+                showAlert(Alert.AlertType.ERROR, "Error", "Failed to delete publisher");
+            }
+
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Database Error",
+                    "Error deleting publisher: " + e.getMessage());
+            e.printStackTrace();
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (checkStmt != null) checkStmt.close();
+                if (deleteStmt != null) deleteStmt.close();
+                if (conn != null) conn.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    public void deletePublisherButton(ActionEvent event) {
+        String idText = deleteIDField.getText().trim();
+
+        if (idText.isEmpty()) {
+            showAlert(Alert.AlertType.WARNING, "Input Required",
+                    "Please enter a Publisher ID to delete");
+            return;
+        }
+
+        int publisherId;
+        try {
+            publisherId = Integer.parseInt(idText);
+        } catch (NumberFormatException e) {
+            showAlert(Alert.AlertType.ERROR, "Invalid Input",
+                    "Publisher ID must be a valid number");
+            return;
+        }
+
+        if (publisherId <= 0) {
+            showAlert(Alert.AlertType.ERROR, "Invalid ID",
+                    "Publisher ID must be a positive number");
+            return;
+        }
+
+        deletePublisherIfNoGames(publisherId);
     }
 
     public void viewAllDetails(ActionEvent event) throws IOException {

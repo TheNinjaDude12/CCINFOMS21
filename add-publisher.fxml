@@ -39,7 +39,7 @@
             <Label text="Active:" GridPane.columnIndex="0" GridPane.rowIndex="7" />
             <CheckBox fx:id="isActiveCheckBox" selected="true" GridPane.columnIndex="1" GridPane.rowIndex="7" />
             <Label text="Games Published:" GridPane.columnIndex="0" GridPane.rowIndex="8" />
-            <TextField fx:id="gamesPublishedField" prefWidth="250" promptText="Number of games" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+            <TextField fx:id="gamesPublishedField" prefWidth="250" promptText="Leave to set default" GridPane.columnIndex="1" GridPane.rowIndex="8" />
             <Label text="Share (%):" GridPane.columnIndex="0" GridPane.rowIndex="9" />
             <TextField fx:id="shareField" prefWidth="250" promptText="Market share percentage" GridPane.columnIndex="1" GridPane.rowIndex="9" />
             <Label text="Budget:" GridPane.columnIndex="0" GridPane.rowIndex="10" />

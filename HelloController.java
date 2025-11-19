@@ -10,9 +10,7 @@ import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.Objects;
 
 public class HelloController {
@@ -64,13 +62,11 @@ public class HelloController {
         stage.setScene(scene);
         stage.show();
 
-        //put the update of games published.
         Connection conn = null;
 
         try {
             conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
 
-            // SQL to update all publishers at once using a subquery
             String sql = "UPDATE publisher_record p " +
                     "SET p.total_games_published = (" +
                     "    SELECT COUNT(*) " +
@@ -101,6 +97,19 @@ public class HelloController {
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
+
+        String query = "UPDATE game_record g SET " +
+                "g.review_average = (SELECT COALESCE(AVG(r.rating), 0) FROM review_record r WHERE r.game_id = g.game_id), " +
+                "g.reviews = (SELECT COUNT(*) FROM review_record r WHERE r.game_id = g.game_id)";
+
+        try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+
+            int rowsAffected = pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
 }
